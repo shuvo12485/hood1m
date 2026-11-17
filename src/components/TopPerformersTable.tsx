@@ -20,6 +20,15 @@ export const TopPerformersTable: React.FC<TopPerformersTableProps> = ({ tokens, 
     return `$${num.toFixed(2)}`;
   };
 
+  if (tokens.length === 0) {
+    return (
+      <div className="panel p-8 mt-12 text-center font-mono text-xs text-[rgb(var(--muted))]">
+        <p className="font-pixel text-base font-bold text-[rgb(var(--ink))]">No tokens launched yet on Arbitrum Sepolia</p>
+        <p className="mt-1">Be the pioneer to launch a token at $1,000,000 FDV floor!</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-4 mt-12 flex flex-wrap items-center gap-3">

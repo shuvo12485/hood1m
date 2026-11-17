@@ -27,8 +27,17 @@ interface TokenPageProps {
 }
 
 export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
-  const { getToken, getTradesForToken, getCommentsForToken, executeTrade, addComment, ethPriceUsd } = useTokens();
-  const { connected, publicKey, balanceEth, balanceUsd, userTokens, openWalletModal, updateUserTokens } = useWallet();
+  const {
+    getToken,
+    getTradesForToken,
+    getCommentsForToken,
+    executeTrade,
+    addComment,
+    ethPriceUsd,
+    getUserTokenBalance,
+    getTokenHolders,
+  } = useTokens();
+  const { connected, publicKey, fullAddress, balanceEth, balanceUsd, openWalletModal } = useWallet();
 
   const token = getToken(mint);
   const trades = getTradesForToken(mint);
@@ -37,7 +46,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
   const [activeTab, setActiveTab] = useState<'trades' | 'holders' | 'comments'>('trades');
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [currencyMode, setCurrencyMode] = useState<'usd' | 'eth'>('usd');
-  const [tradeInput, setTradeInput] = useState<string>('500'); // default $500
+  const [tradeInput, setTradeInput] = useState<string>('0.05'); // default 0.05 ETH
   const [slippage, setSlippage] = useState<number>(1.0);
   const [showSlippage, setShowSlippage] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -45,6 +54,26 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [txHashLink, setTxHashLink] = useState<string | null>(null);
   const [isTrading, setIsTrading] = useState<boolean>(false);
+  const [onChainTokenBalance, setOnChainTokenBalance] = useState<number>(0);
+  const [holdersData, setHoldersData] = useState<{
+    curveBalance: number;
+    creatorBalance: number;
+    userBalance: number;
+  } | null>(null);
+
+  // Fetch real on-chain token balance
+  const refreshOnChainData = React.useCallback(async () => {
+    if (token) {
+      if (fullAddress) {
+        getUserTokenBalance(token.mint).then(setOnChainTokenBalance);
+      }
+      getTokenHolders(token.mint, (token as any).curveAddress || token.mint, token.creator).then(setHoldersData);
+    }
+  }, [token, fullAddress, getUserTokenBalance, getTokenHolders]);
+
+  React.useEffect(() => {
+    refreshOnChainData();
+  }, [refreshOnChainData]);
 
   if (!token) {
     return (
@@ -60,7 +89,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
     );
   }
 
-  const userTokenBalance = userTokens[token.mint] || 0;
+  const userTokenBalance = onChainTokenBalance;
   const progressPercent = Math.min(100, Math.round((token.ethReserve / GRADUATION_ETH_THRESHOLD) * 100));
 
   const parsedInput = parseFloat(tradeInput) || 0;
@@ -115,6 +144,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
           });
           if (res.txHash) setTxHashLink(res.txHash);
           setTradeInput('');
+          refreshOnChainData();
         } else {
           setFeedback({ type: 'error', text: res.message });
         }
@@ -143,6 +173,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
           });
           if (res.txHash) setTxHashLink(res.txHash);
           setTradeInput('');
+          refreshOnChainData();
         } else {
           setFeedback({ type: 'error', text: res.message });
         }
@@ -342,88 +373,123 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
 
             <div className="mt-4">
               {activeTab === 'trades' && (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs font-mono">
-                    <thead>
-                      <tr className="border-b border-[rgb(var(--line))] text-left text-[rgb(var(--muted))]">
-                        <th className="pb-2 font-normal">Type</th>
-                        <th className="pb-2 font-normal">USD ($)</th>
-                        <th className="pb-2 font-normal">ETH</th>
-                        <th className="pb-2 font-normal">{token.symbol}</th>
-                        <th className="pb-2 font-normal">Price USD</th>
-                        <th className="pb-2 font-normal">Trader</th>
-                        <th className="pb-2 font-normal">Tx Hash</th>
-                        <th className="pb-2 font-normal text-right">Time</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[rgb(var(--line))]/50">
-                      {trades.map((tr) => (
-                        <tr key={tr.id} className="hover:bg-[rgb(var(--raised))]/50 transition">
-                          <td className="py-2.5">
-                            <span
-                              className={`rounded px-1.5 py-0.5 font-bold uppercase text-[10px] ${
-                                tr.type === 'buy'
-                                  ? 'bg-[#00C805]/10 text-[#00C805]'
-                                  : 'bg-[rgb(var(--down))]/10 text-[rgb(var(--down))]'
-                              }`}
-                            >
-                              {tr.type}
-                            </span>
-                          </td>
-                          <td className="py-2.5 font-bold">${tr.usdAmount.toFixed(2)}</td>
-                          <td className="py-2.5 font-semibold text-[rgb(var(--muted))]">{tr.ethAmount.toFixed(4)}</td>
-                          <td className="py-2.5">{tr.tokenAmount.toLocaleString()}</td>
-                          <td className="py-2.5">${tr.priceUsd.toFixed(6)}</td>
-                          <td className="py-2.5 text-[rgb(var(--muted))]">{tr.wallet}</td>
-                          <td className="py-2.5 text-[rgb(var(--muted))]">
-                            {tr.txHash ? (
-                              <a
-                                href={`https://sepolia.arbiscan.io/tx/${tr.txHash}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-[#00C805] hover:underline"
-                              >
-                                {tr.txHash.slice(0, 8)}…
-                              </a>
-                            ) : (
-                              '—'
-                            )}
-                          </td>
-                          <td className="py-2.5 text-right text-[rgb(var(--muted))]">
-                            {Math.round((Date.now() - tr.timestamp) / 1000 / 60)}m ago
-                          </td>
+                trades.length === 0 ? (
+                  <div className="rounded-xl border border-[rgb(var(--line))] bg-[rgb(var(--raised))]/30 p-8 text-center font-mono text-xs text-[rgb(var(--muted))]">
+                    No on-chain trades yet for this token. Be the first to buy on the bonding curve!
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs font-mono">
+                      <thead>
+                        <tr className="border-b border-[rgb(var(--line))] text-left text-[rgb(var(--muted))]">
+                          <th className="pb-2 font-normal">Type</th>
+                          <th className="pb-2 font-normal">USD ($)</th>
+                          <th className="pb-2 font-normal">ETH</th>
+                          <th className="pb-2 font-normal">{token.symbol}</th>
+                          <th className="pb-2 font-normal">Price USD</th>
+                          <th className="pb-2 font-normal">Trader</th>
+                          <th className="pb-2 font-normal">Tx Hash</th>
+                          <th className="pb-2 font-normal text-right">Time</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-[rgb(var(--line))]/50">
+                        {trades.map((tr) => (
+                          <tr key={tr.id} className="hover:bg-[rgb(var(--raised))]/50 transition">
+                            <td className="py-2.5">
+                              <span
+                                className={`rounded px-1.5 py-0.5 font-bold uppercase text-[10px] ${
+                                  tr.type === 'buy'
+                                    ? 'bg-[#00C805]/10 text-[#00C805]'
+                                    : 'bg-[rgb(var(--down))]/10 text-[rgb(var(--down))]'
+                                }`}
+                              >
+                                {tr.type}
+                              </span>
+                            </td>
+                            <td className="py-2.5 font-bold">${tr.usdAmount.toFixed(2)}</td>
+                            <td className="py-2.5 font-semibold text-[rgb(var(--muted))]">{tr.ethAmount.toFixed(4)}</td>
+                            <td className="py-2.5">{tr.tokenAmount.toLocaleString()}</td>
+                            <td className="py-2.5">${tr.priceUsd.toFixed(6)}</td>
+                            <td className="py-2.5 text-[rgb(var(--muted))]">{tr.wallet}</td>
+                            <td className="py-2.5 text-[rgb(var(--muted))]">
+                              {tr.txHash ? (
+                                <a
+                                  href={`https://sepolia.arbiscan.io/tx/${tr.txHash}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[#00C805] hover:underline"
+                                >
+                                  {tr.txHash.slice(0, 8)}…
+                                </a>
+                              ) : (
+                                '—'
+                              )}
+                            </td>
+                            <td className="py-2.5 text-right text-[rgb(var(--muted))]">
+                              {Math.round((Date.now() - tr.timestamp) / 1000 / 60)}m ago
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )
               )}
 
               {activeTab === 'holders' && (
                 <div className="space-y-3 font-mono text-xs">
                   <div className="flex items-center justify-between rounded-xl border border-[rgb(var(--line))] p-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-[rgb(var(--ink))]">1. Robinhood / Uniswap Curve Pool</span>
+                      <span className="font-bold text-[rgb(var(--ink))]">1. Bonding Curve Pool</span>
                       <span className="rounded bg-[#00C805]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#00C805]">
-                        LOCKED
+                        ON-CHAIN
                       </span>
                     </div>
-                    <span className="font-bold">
-                      {((token.tokenReserve / INITIAL_SUPPLY) * 100).toFixed(1)}%
-                    </span>
+                    <div className="text-right">
+                      <span className="font-bold">
+                        {holdersData ? `${holdersData.curveBalance.toLocaleString()} ${token.symbol}` : '800,000,000'}
+                      </span>
+                      <span className="block text-[10px] text-[rgb(var(--muted))]">
+                        {holdersData ? `${((holdersData.curveBalance / 1_000_000_000) * 100).toFixed(1)}% of total` : '80.0%'}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between rounded-xl border border-[rgb(var(--line))] p-3">
                     <div className="flex items-center gap-2">
-                      <span>2. Creator ({token.creator})</span>
+                      <span>2. Creator ({token.creator.slice(0, 6)}...{token.creator.slice(-4)})</span>
                       <span className="rounded bg-[rgb(var(--raised))] px-1.5 py-0.5 text-[10px] text-[rgb(var(--muted))]">
-                        DEV
+                        CREATOR
                       </span>
                     </div>
-                    <span className="font-bold">
-                      {(100 - (token.tokenReserve / INITIAL_SUPPLY) * 100).toFixed(1)}%
-                    </span>
+                    <div className="text-right">
+                      <span className="font-bold">
+                        {holdersData ? `${holdersData.creatorBalance.toLocaleString()} ${token.symbol}` : '0'}
+                      </span>
+                      <span className="block text-[10px] text-[rgb(var(--muted))]">
+                        {holdersData ? `${((holdersData.creatorBalance / 1_000_000_000) * 100).toFixed(2)}% of total` : '0.00%'}
+                      </span>
+                    </div>
                   </div>
+
+                  {fullAddress && (
+                    <div className="flex items-center justify-between rounded-xl border border-[rgb(var(--line))] p-3 bg-[rgb(var(--raised))]/30">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#00C805]">3. Your Wallet ({fullAddress.slice(0, 6)}...{fullAddress.slice(-4)})</span>
+                        <span className="rounded bg-[#00C805]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#00C805]">
+                          YOU
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-[#00C805]">
+                          {holdersData ? `${holdersData.userBalance.toLocaleString()} ${token.symbol}` : '0'}
+                        </span>
+                        <span className="block text-[10px] text-[rgb(var(--muted))]">
+                          {holdersData ? `${((holdersData.userBalance / 1_000_000_000) * 100).toFixed(2)}% of total` : '0.00%'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

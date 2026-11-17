@@ -159,15 +159,30 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           </div>
 
           {/* New Coins Cards Grid */}
-          <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
-            {newMillionaires.map((token) => (
-              <CoinCard
-                key={token.mint}
-                token={token}
-                onSelect={(mint) => navigate(`/token/${mint}`)}
-              />
-            ))}
-          </div>
+          {newMillionaires.length === 0 ? (
+            <div className="panel p-8 text-center font-mono">
+              <p className="font-pixel text-lg font-bold text-[rgb(var(--ink))]">No coins launched yet on Arbitrum Sepolia</p>
+              <p className="mt-1.5 text-xs text-[rgb(var(--muted))]">
+                Every coin starts at $1,000,000 FDV floor. Be the first pioneer to deploy!
+              </p>
+              <button
+                onClick={() => navigate('/launch')}
+                className="btn-dark mt-4 text-xs font-bold"
+              >
+                Create a Millionaire →
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              {newMillionaires.map((token) => (
+                <CoinCard
+                  key={token.mint}
+                  token={token}
+                  onSelect={(mint) => navigate(`/token/${mint}`)}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Top Performers Table */}
           <TopPerformersTable
@@ -210,29 +225,35 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
               </button>
             </div>
 
-            <div className="mt-3 space-y-2">
-              {clubCoins.slice(0, 3).map((c) => (
-                <div
-                  key={c.mint}
-                  onClick={() => navigate(`/token/${c.mint}`)}
-                  className="flex items-center justify-between rounded-xl border border-[rgb(var(--line))] p-2.5 transition hover:bg-[rgb(var(--raised))]/60 cursor-pointer"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <img src={c.image} alt={c.name} className="h-7 w-7 rounded-lg object-cover" />
-                    <div>
-                      <div className="font-pixel text-xs font-bold leading-tight">{c.name}</div>
-                      <div className="font-mono text-[10px] text-[rgb(var(--muted))]">${c.symbol}</div>
+            {clubCoins.length === 0 ? (
+              <p className="font-mono text-xs text-[rgb(var(--muted))] text-center py-4">
+                No coins in this milestone tier yet.
+              </p>
+            ) : (
+              <div className="mt-3 space-y-2">
+                {clubCoins.slice(0, 3).map((c) => (
+                  <div
+                    key={c.mint}
+                    onClick={() => navigate(`/token/${c.mint}`)}
+                    className="flex items-center justify-between rounded-xl border border-[rgb(var(--line))] p-2.5 transition hover:bg-[rgb(var(--raised))]/60 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <img src={c.image} alt={c.name} className="h-7 w-7 rounded-lg object-cover" />
+                      <div>
+                        <div className="font-pixel text-xs font-bold leading-tight">{c.name}</div>
+                        <div className="font-mono text-[10px] text-[rgb(var(--muted))]">${c.symbol}</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-pixel text-xs font-bold">{formatUsd(c.fdv)}</div>
+                      <div className="font-mono text-[10px] text-[#00C805]">
+                        +{c.change24h.toFixed(1)}%
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-pixel text-xs font-bold">{formatUsd(c.fdv)}</div>
-                    <div className="font-mono text-[10px] text-[#00C805]">
-                      +{c.change24h.toFixed(1)}%
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <button
               onClick={() => navigate('/club')}

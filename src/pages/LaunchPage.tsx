@@ -24,8 +24,10 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
   const [website, setWebsite] = useState('');
   const [initialBuyEth, setInitialBuyEth] = useState<string>('0');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [launchError, setLaunchError] = useState<string | null>(null);
+  const [launchStage, setLaunchStage] = useState<string>('');
 
-  const rentEth = 0.005; // Standard Arbitrum L2 gas for ERC-20 contract creation
+  const rentEth = 0.003; // Estimated Arbitrum Sepolia gas for contract deployment
   const buyAmount = parseFloat(initialBuyEth) || 0;
   const totalEthRequired = rentEth + buyAmount;
 
@@ -45,36 +47,42 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
 
   const handleLaunch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLaunchError(null);
+
     if (!connected) {
       openWalletModal();
       return;
     }
 
     if (balanceEth < totalEthRequired) {
-      alert(`Insufficient balance. You need at least ${totalEthRequired.toFixed(3)} ETH on Arbitrum Sepolia.`);
+      setLaunchError(`Insufficient balance. You have ${balanceEth.toFixed(4)} ETH but need ~${totalEthRequired.toFixed(4)} ETH on Arbitrum Sepolia.`);
       return;
     }
 
     setIsSubmitting(true);
+    setLaunchStage('Deploying smart contracts to Arbitrum Sepolia. Please confirm in your wallet...');
+
     try {
       const res = await createToken({
         name,
         symbol: symbol.toUpperCase(),
         description: description || `${name} launched on Hood1M starting at $1,000,000 FDV.`,
         image: imageUrl || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&auto=format&fit=crop&q=80',
-        creator: publicKey || '0x71C8...3999',
+        creator: publicKey || '0x0000000000000000000000000000000000000000',
         initialBuyEth: buyAmount,
         twitter: twitter || undefined,
         telegram: telegram || undefined,
         website: website || undefined,
       });
 
+      setLaunchStage('Token deployed! Redirecting...');
       navigate(`/token/${res.token.mint}`);
     } catch (err: any) {
       console.error(err);
-      alert('Failed to launch token: ' + (err?.message || 'Transaction rejected'));
+      setLaunchError(err?.message || 'Transaction was rejected or failed on Arbitrum Sepolia.');
     } finally {
       setIsSubmitting(false);
+      setLaunchStage('');
     }
   };
 
@@ -303,6 +311,34 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
             </div>
           </div>
 
+          {/* Status and Error Messages */}
+          {launchStage && (
+            <div className="rounded-xl border border-[#00C805] bg-[#00C805]/10 p-4 font-mono text-xs text-[#00C805] flex items-center gap-2">
+              <Rocket className="h-4 w-4 animate-spin shrink-0" />
+              <span>{launchStage}</span>
+            </div>
+          )}
+
+          {launchError && (
+            <div className="rounded-xl border border-[rgb(var(--down))] bg-[rgb(var(--down))]/10 p-4 font-mono text-xs text-[rgb(var(--down))] space-y-2">
+              <div className="font-bold">Deployment Error</div>
+              <p>{launchError}</p>
+              {launchError.toLowerCase().includes('insufficient') && (
+                <div className="pt-2 border-t border-[rgb(var(--down))]/30 flex items-center justify-between">
+                  <span>Need free testnet funds?</span>
+                  <a
+                    href="https://faucets.chain.link/arbitrum-sepolia"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline font-bold text-[rgb(var(--down))] hover:opacity-80"
+                  >
+                    Claim Arbitrum Sepolia ETH ↗
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Action CTA */}
           <div>
             {!connected ? (
@@ -311,7 +347,7 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
                 onClick={openWalletModal}
                 className="btn-dark w-full py-4 text-base justify-center shadow-lg"
               >
-                Connect Robinhood Wallet to Launch
+                Connect Wallet to Launch
               </button>
             ) : (
               <button
@@ -321,15 +357,15 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
-                    <Rocket className="h-5 w-5 animate-spin" /> Deploying to Arbitrum L2…
+                    <Rocket className="h-5 w-5 animate-spin" /> Confirming in Wallet…
                   </span>
                 ) : (
-                  <span>Launch at $1,000,000 FDV →</span>
+                  <span>Launch on Arbitrum Sepolia →</span>
                 )}
               </button>
             )}
             <p className="text-center font-mono text-[11px] text-[rgb(var(--muted))] mt-3">
-              Your token will be deployed as an ERC-20 on Arbitrum with full self-custody and automated Uniswap v3 graduation.
+              Your token will be deployed as a verified ERC-20 on Arbitrum Sepolia with zero upfront liquidity and live bonding curve trading.
             </p>
           </div>
         </form>

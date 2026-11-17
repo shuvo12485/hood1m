@@ -55,8 +55,22 @@ export const ClubPage: React.FC<ClubPageProps> = ({ navigate }) => {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((t) => (
+      {filtered.length === 0 ? (
+        <div className="panel p-12 mt-8 text-center font-mono">
+          <p className="font-pixel text-xl font-bold text-[rgb(var(--ink))]">No coins in this milestone tier yet</p>
+          <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+            Every coin on Hood1M launches at $1,000,000 FDV. Buy on the curve to push a coin into the multi-millionaire tiers!
+          </p>
+          <button
+            onClick={() => navigate('/launch')}
+            className="btn-dark mt-5 text-xs font-bold"
+          >
+            Create a Millionaire →
+          </button>
+        </div>
+      ) : (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((t) => (
           <div
             key={t.mint}
             onClick={() => navigate(`/token/${t.mint}`)}
@@ -95,6 +109,7 @@ export const ClubPage: React.FC<ClubPageProps> = ({ navigate }) => {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };

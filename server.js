@@ -19,128 +19,14 @@ if (!fs.existsSync(DATA_DIR)) {
 const TOKENS_FILE = path.join(DATA_DIR, 'tokens.json');
 const TRADES_FILE = path.join(DATA_DIR, 'trades.json');
 const COMMENTS_FILE = path.join(DATA_DIR, 'comments.json');
+const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Initial mock data seeds
-const INITIAL_TOKENS = [
-  {
-    mint: '0x71C8A79B37A4a24c28470aE2E72Ac23999911111',
-    curveAddress: '0x81C8A79B37A4a24c28470aE2E72Ac23999922222',
-    name: 'Robinhood Genesis',
-    symbol: 'HOOD1M',
-    description: 'The premier millionaire token launching on Hood1M (Arbitrum L2). Fair, commission-free, starting at $1,000,000 FDV.',
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&auto=format&fit=crop&q=80',
-    creator: '0x9B2a4e9812A45C8F79B12456eC23412345674Fa1',
-    createdAt: Date.now() - 1000 * 60 * 60 * 2,
-    ethReserve: 3.5,
-    usdReserve: 3.5 * 3150,
-    price: 0.0017,
-    fdv: 1_700_000,
-    circulatingMarketCap: 1_700_000 * 0.035,
-    tokenReserve: 965_000_000,
-    volume24h: 84_500,
-    change24h: 70.0,
-    graduated: false,
-    holders: 195,
-    twitter: 'https://x.com',
-    telegram: 'https://t.me',
-  },
-  {
-    mint: '0x32A4B88dE75e925c48b0a982Fe3e134599922222',
-    curveAddress: '0x92A4B88dE75e925c48b0a982Fe3e134599933333',
-    name: 'Arbitrum Chad',
-    symbol: 'ACHAD',
-    description: 'Decentralized meme finance on Arbitrum Sepolia with instant execution and deep Uniswap liquidity.',
-    image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=400&auto=format&fit=crop&q=80',
-    creator: '0x3Fe1789B12019348274092174981273491898Bc1',
-    createdAt: Date.now() - 1000 * 60 * 60 * 6,
-    ethReserve: 8.6,
-    usdReserve: 8.6 * 3150,
-    price: 0.0028,
-    fdv: 2_800_000,
-    circulatingMarketCap: 2_800_000 * 0.086,
-    tokenReserve: 810_000_000,
-    volume24h: 215_000,
-    change24h: 180.0,
-    graduated: false,
-    holders: 840,
-    twitter: 'https://x.com',
-    telegram: 'https://t.me',
-  },
-  {
-    mint: '0x8892cF89d120a16B45A259eB9d7F341999933333',
-    curveAddress: '0xA892cF89d120a16B45A259eB9d7F341999944444',
-    name: 'Sherwood Green',
-    symbol: 'WOOD',
-    description: 'The green candle army backed by Hood1M self-custody. Fast approaching the 35 ETH graduation.',
-    image: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=400&auto=format&fit=crop&q=80',
-    creator: '0x712a45698B124560912450912456091245B4f311',
-    createdAt: Date.now() - 1000 * 60 * 60 * 18,
-    ethReserve: 28.5,
-    usdReserve: 28.5 * 3150,
-    price: 0.0084,
-    fdv: 8_400_000,
-    circulatingMarketCap: 8_400_000 * 0.285,
-    tokenReserve: 380_000_000,
-    volume24h: 960_000,
-    change24h: 740.0,
-    graduated: false,
-    holders: 2420,
-    twitter: 'https://x.com',
-    telegram: 'https://t.me',
-  },
-  {
-    mint: '0x11119A887c2b381F490234eB205a123999944444',
-    curveAddress: '0xB1119A887c2b381F490234eB205a123999955555',
-    name: 'Giga Millionaire',
-    symbol: 'GIGA',
-    description: 'First coin to surpass 35 ETH on Hood1M! Permanently locked in Uniswap v3 on Arbitrum.',
-    image: 'https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?w=400&auto=format&fit=crop&q=80',
-    creator: '0x55aa45698B124560912450912456091245120E22',
-    createdAt: Date.now() - 1000 * 60 * 60 * 48,
-    ethReserve: 35.0,
-    usdReserve: 35.0 * 3150,
-    price: 0.0114,
-    fdv: 11_400_000,
-    circulatingMarketCap: 11_400_000,
-    tokenReserve: 0,
-    volume24h: 3_120_000,
-    change24h: 1040.0,
-    graduated: true,
-    holders: 5310,
-    twitter: 'https://x.com',
-    telegram: 'https://t.me',
-  }
-];
-
-const INITIAL_TRADES = [
-  {
-    id: 't-init-1',
-    mint: '0x32A4B88dE75e925c48b0a982Fe3e134599922222',
-    type: 'buy',
-    ethAmount: 0.8,
-    usdAmount: 0.8 * 3150,
-    tokenAmount: 140_000,
-    priceUsd: 0.0028,
-    wallet: '0x7b814a21568912480124951240891245784A2199',
-    timestamp: Date.now() - 1000 * 120,
-    txHash: '0x89ab45ef1234567890abcdef1234567890abcdef1234567890abcdef12345678',
-  },
-  {
-    id: 't-init-2',
-    mint: '0x8892cF89d120a16B45A259eB9d7F341999933333',
-    type: 'buy',
-    ethAmount: 1.5,
-    usdAmount: 1.5 * 3150,
-    tokenAmount: 95_000,
-    priceUsd: 0.0084,
-    wallet: '0x21fe89bc12456891248012495124089124589bc1',
-    timestamp: Date.now() - 1000 * 300,
-    txHash: '0x1234cdef1234567890abcdef1234567890abcdef1234567890abcdef12345678',
-  }
-];
+const INITIAL_TOKENS = [];
+const INITIAL_TRADES = [];
+const INITIAL_COMMENTS = [];
 
 function readJsonFile(filePath, defaultValue) {
   try {
@@ -164,7 +50,7 @@ function writeJsonFile(filePath, data) {
   }
 }
 
-// In-memory cache for live ETH price
+// In-memory cache for live ETH price from Binance
 let cachedEthPrice = { price: 3150, timestamp: 0 };
 
 async function fetchLiveEthPrice() {
@@ -212,13 +98,52 @@ app.get('/api/eth-price', async (req, res) => {
   res.json({ ethPriceUsd: price, timestamp: Date.now() });
 });
 
+app.get('/api/config', (req, res) => {
+  const config = readJsonFile(CONFIG_FILE, {
+    factoryAddress: process.env.FACTORY_ADDRESS || '',
+    network: 'Arbitrum Sepolia Testnet',
+    chainId: 421614,
+  });
+  res.json(config);
+});
+
+app.post('/api/config', (req, res) => {
+  const { factoryAddress } = req.body;
+  const config = readJsonFile(CONFIG_FILE, {
+    factoryAddress: '',
+    network: 'Arbitrum Sepolia Testnet',
+    chainId: 421614,
+  });
+  if (factoryAddress && factoryAddress.startsWith('0x')) {
+    config.factoryAddress = factoryAddress;
+    writeJsonFile(CONFIG_FILE, config);
+  }
+  res.json(config);
+});
+
+app.get('/api/stats', (req, res) => {
+  const tokens = readJsonFile(TOKENS_FILE, []);
+  const trades = readJsonFile(TRADES_FILE, []);
+
+  const totalVolume = trades.reduce((sum, tr) => sum + (Number(tr.usdAmount) || 0), 0);
+  const coinsAbove1M = tokens.filter(t => (t.fdv || 0) >= 1_000_000).length;
+  const multiMillionaires = tokens.filter(t => (t.fdv || 0) >= 2_000_000).length;
+
+  res.json({
+    coinsLaunched: tokens.length,
+    totalVolume,
+    coinsAbove1M,
+    multiMillionaires,
+  });
+});
+
 app.get('/api/tokens', (req, res) => {
-  const tokens = readJsonFile(TOKENS_FILE, INITIAL_TOKENS);
+  const tokens = readJsonFile(TOKENS_FILE, []);
   res.json(tokens);
 });
 
 app.get('/api/tokens/:mint', (req, res) => {
-  const tokens = readJsonFile(TOKENS_FILE, INITIAL_TOKENS);
+  const tokens = readJsonFile(TOKENS_FILE, []);
   const token = tokens.find(t => t.mint.toLowerCase() === req.params.mint.toLowerCase());
   if (!token) return res.status(404).json({ error: 'Token not found' });
   res.json(token);
@@ -244,7 +169,12 @@ app.post('/api/tokens', (req, res) => {
     return res.status(400).json({ error: 'Missing required token fields' });
   }
 
-  const tokens = readJsonFile(TOKENS_FILE, INITIAL_TOKENS);
+  // Must be a real 0x address
+  if (!mint.startsWith('0x') || mint.length !== 42) {
+    return res.status(400).json({ error: 'Invalid Ethereum contract address' });
+  }
+
+  const tokens = readJsonFile(TOKENS_FILE, []);
   const existing = tokens.find(t => t.mint.toLowerCase() === mint.toLowerCase());
   if (existing) {
     return res.status(400).json({ error: 'Token already exists' });
@@ -253,7 +183,7 @@ app.post('/api/tokens', (req, res) => {
   const ethPrice = cachedEthPrice.price;
   const initialEth = Number(initialBuyEth) || 0;
   
-  // Starting FDV $1,000,000
+  // Starting FDV $1,000,000 floor ($0.001 per token)
   const price = 0.001 * (1 + (initialEth / 5) * 1.0);
   const fdv = price * 1_000_000_000;
 
@@ -285,9 +215,9 @@ app.post('/api/tokens', (req, res) => {
   tokens.unshift(newToken);
   writeJsonFile(TOKENS_FILE, tokens);
 
-  // If initial buy happened, register trade
-  if (initialEth > 0) {
-    const trades = readJsonFile(TRADES_FILE, INITIAL_TRADES);
+  // If initial buy happened on-chain, register trade
+  if (initialEth > 0 && txHash) {
+    const trades = readJsonFile(TRADES_FILE, []);
     trades.unshift({
       id: `t-${Date.now()}`,
       mint,
@@ -298,7 +228,7 @@ app.post('/api/tokens', (req, res) => {
       priceUsd: price,
       wallet: creator,
       timestamp: Date.now(),
-      txHash: txHash || `0x${Date.now().toString(16)}`,
+      txHash,
     });
     writeJsonFile(TRADES_FILE, trades);
   }
@@ -307,7 +237,7 @@ app.post('/api/tokens', (req, res) => {
 });
 
 app.get('/api/trades', (req, res) => {
-  const trades = readJsonFile(TRADES_FILE, INITIAL_TRADES);
+  const trades = readJsonFile(TRADES_FILE, []);
   const mint = req.query.mint;
   if (mint) {
     return res.json(trades.filter(t => t.mint.toLowerCase() === mint.toLowerCase()));
@@ -317,11 +247,11 @@ app.get('/api/trades', (req, res) => {
 
 app.post('/api/trades', (req, res) => {
   const { mint, type, ethAmount, tokenAmount, priceUsd, wallet, txHash } = req.body;
-  if (!mint || !wallet || ethAmount === undefined) {
-    return res.status(400).json({ error: 'Missing required trade fields' });
+  if (!mint || !wallet || ethAmount === undefined || !txHash) {
+    return res.status(400).json({ error: 'Missing required trade fields or txHash' });
   }
 
-  const trades = readJsonFile(TRADES_FILE, INITIAL_TRADES);
+  const trades = readJsonFile(TRADES_FILE, []);
   const ethPrice = cachedEthPrice.price;
   const numEth = Number(ethAmount);
   const numTokens = Number(tokenAmount);
@@ -337,14 +267,14 @@ app.post('/api/trades', (req, res) => {
     priceUsd: numPrice,
     wallet,
     timestamp: Date.now(),
-    txHash: txHash || `0x${Date.now().toString(16)}`,
+    txHash,
   };
 
   trades.unshift(trade);
   writeJsonFile(TRADES_FILE, trades);
 
   // Update token reserves
-  const tokens = readJsonFile(TOKENS_FILE, INITIAL_TOKENS);
+  const tokens = readJsonFile(TOKENS_FILE, []);
   const tokenIdx = tokens.findIndex(t => t.mint.toLowerCase() === mint.toLowerCase());
   if (tokenIdx !== -1) {
     const t = tokens[tokenIdx];

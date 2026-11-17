@@ -84,7 +84,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ navigate, searchQuery,
         <div>
           <h1 className="h-display text-4xl font-bold">Explore</h1>
           <p className="font-mono text-xs text-[rgb(var(--muted))] mt-1">
-            Browse all coins on the Meteora Dynamic Bonding Curve
+            Browse all verified coins launched on Arbitrum Sepolia
           </p>
         </div>
 
@@ -140,18 +140,18 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ navigate, searchQuery,
       {/* Results View */}
       <div className="mt-8">
         {sortedTokens.length === 0 ? (
-          <div className="panel p-12 text-center">
-            <p className="font-mono text-sm text-[rgb(var(--muted))]">
-              No coins found matching "{searchQuery || activeFilter}".
+          <div className="panel p-12 text-center font-mono">
+            <p className="font-pixel text-xl font-bold text-[rgb(var(--ink))]">
+              {searchQuery ? `No coins found matching "${searchQuery}"` : 'No coins launched yet on Arbitrum Sepolia'}
+            </p>
+            <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+              Every coin starts at $1,000,000 FDV. Be the first to deploy!
             </p>
             <button
-              onClick={() => {
-                setSearchQuery('');
-                setActiveFilter('new');
-              }}
-              className="btn-dark mt-4"
+              onClick={() => navigate('/launch')}
+              className="btn-dark mt-5 text-xs font-bold"
             >
-              Reset filters
+              Launch a Millionaire Coin →
             </button>
           </div>
         ) : viewMode === 'grid' ? (

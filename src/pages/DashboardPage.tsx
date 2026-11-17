@@ -9,10 +9,22 @@ interface DashboardPageProps {
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ navigate }) => {
-  const { connected, publicKey, balanceEth, balanceUsd, userTokens, openWalletModal } = useWallet();
-  const { tokens } = useTokens();
+  const { connected, publicKey, fullAddress, balanceEth, balanceUsd, openWalletModal } = useWallet();
+  const { tokens, getUserTokenBalance, ethPriceUsd } = useTokens();
+  const [userBalances, setUserBalances] = React.useState<Record<string, number>>({});
 
-  if (!connected || !publicKey) {
+  React.useEffect(() => {
+    if (!fullAddress || tokens.length === 0) return;
+    tokens.forEach((t) => {
+      getUserTokenBalance(t.mint).then((bal) => {
+        if (bal > 0) {
+          setUserBalances((prev) => ({ ...prev, [t.mint]: bal }));
+        }
+      });
+    });
+  }, [fullAddress, tokens, getUserTokenBalance]);
+
+  if (!connected || !fullAddress) {
     return (
       <div className="pt-16 pb-24 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-[#00C805]">
@@ -29,7 +41,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ navigate }) => {
     );
   }
 
-  const userHoldings = Object.entries(userTokens)
+  const userHoldings = Object.entries(userBalances)
     .filter(([_, amt]) => amt > 0)
     .map(([mint, amt]) => {
       const token = tokens.find((t) => t.mint.toLowerCase() === mint.toLowerCase());
@@ -41,7 +53,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ navigate }) => {
   const netWorthUsd = totalTokensValueUsd + balanceUsd;
 
   const userCoins = tokens.filter(
-    (t) => t.creator.toLowerCase() === publicKey.toLowerCase()
+    (t) => t.creator.toLowerCase() === fullAddress.toLowerCase()
   );
 
   return (
@@ -49,10 +61,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ navigate }) => {
       <div className="border-b border-[rgb(var(--line))] pb-6">
         <div className="flex items-center gap-2">
           <LayoutDashboard className="h-6 w-6 text-[#00C805]" />
-          <h1 className="h-display text-4xl font-bold">Robinhood Portfolio</h1>
+          <h1 className="h-display text-4xl font-bold">Portfolio</h1>
         </div>
         <p className="font-mono text-xs text-[rgb(var(--muted))] mt-1">
-          Account: {publicKey} · Network: Arbitrum One L2
+          Account: {publicKey} ({fullAddress.slice(0, 10)}…) · Network: Arbitrum Sepolia Testnet
         </p>
       </div>
 
