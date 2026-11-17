@@ -27,8 +27,8 @@ interface TokenPageProps {
 }
 
 export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
-  const { getToken, getTradesForToken, getCommentsForToken, executeTrade, addComment } = useTokens();
-  const { connected, publicKey, balanceEth, balanceUsd, userTokens, openWalletModal, sendRealTransaction, updateUserTokens } = useWallet();
+  const { getToken, getTradesForToken, getCommentsForToken, executeTrade, addComment, ethPriceUsd } = useTokens();
+  const { connected, publicKey, balanceEth, balanceUsd, userTokens, openWalletModal, updateUserTokens } = useWallet();
 
   const token = getToken(mint);
   const trades = getTradesForToken(mint);
@@ -43,6 +43,8 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
   const [copied, setCopied] = useState(false);
   const [commentInput, setCommentInput] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [txHashLink, setTxHashLink] = useState<string | null>(null);
+  const [isTrading, setIsTrading] = useState<boolean>(false);
 
   if (!token) {
     return (
@@ -62,7 +64,8 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
   const progressPercent = Math.min(100, Math.round((token.ethReserve / GRADUATION_ETH_THRESHOLD) * 100));
 
   const parsedInput = parseFloat(tradeInput) || 0;
-  const ethAmount = currencyMode === 'usd' ? parsedInput / ETH_PRICE_USD : parsedInput;
+  const activeEthPrice = ethPriceUsd || ETH_PRICE_USD;
+  const ethAmount = currencyMode === 'usd' ? parsedInput / activeEthPrice : parsedInput;
 
   const buySim = tradeType === 'buy' && ethAmount > 0 ? calculateBuyTokens(ethAmount, token.ethReserve) : null;
   const sellSim = tradeType === 'sell' && parsedInput > 0 ? calculateSellTokens(parsedInput, token.ethReserve) : null;
@@ -85,75 +88,69 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
       return;
     }
 
-    if (tradeType === 'buy') {
-      if (balanceEth < ethAmount) {
-        setFeedback({ type: 'error', text: `Insufficient buying power (Available: $${balanceUsd.toFixed(2)})` });
-        return;
-      }
+    setIsTrading(true);
+    setFeedback(null);
+    setTxHashLink(null);
 
-      // Trigger real wallet confirmation
-      const tx = await sendRealTransaction({
-        to: token.mint,
-        valueEth: ethAmount,
-      });
+    try {
+      if (tradeType === 'buy') {
+        if (balanceEth < ethAmount) {
+          setFeedback({ type: 'error', text: `Insufficient buying power (Available: ${balanceEth.toFixed(4)} ETH)` });
+          setIsTrading(false);
+          return;
+        }
 
-      if (!tx.success) {
-        setFeedback({ type: 'error', text: tx.error || 'Transaction rejected in wallet' });
-        return;
-      }
-
-      const res = executeTrade({
-        mint: token.mint,
-        type: 'buy',
-        ethAmount,
-        tokenAmount: buySim?.tokensReceived || 0,
-        wallet: publicKey || '0x71C8...3999',
-      });
-
-      if (res.success && res.tokensDiff) {
-        updateUserTokens(token.mint, res.tokensDiff);
-        setFeedback({
-          type: 'success',
-          text: `Purchased ${res.tokensDiff.toLocaleString()} ${token.symbol} for $${(ethAmount * ETH_PRICE_USD).toFixed(2)} (${ethAmount.toFixed(4)} ETH)!`,
+        const res = await executeTrade({
+          mint: token.mint,
+          type: 'buy',
+          ethAmount,
+          tokenAmount: buySim?.tokensReceived || 0,
+          wallet: publicKey || '0x71C8...3999',
         });
-        setTradeInput('');
-      }
-    } else {
-      if (userTokenBalance < parsedInput) {
-        setFeedback({
-          type: 'error',
-          text: `Insufficient ${token.symbol} balance (You own ${userTokenBalance.toLocaleString()})`,
+
+        if (res.success) {
+          setFeedback({
+            type: 'success',
+            text: `Order filled on Arbitrum Sepolia! Received ${res.tokensDiff ? res.tokensDiff.toLocaleString() : ''} ${token.symbol}.`,
+          });
+          if (res.txHash) setTxHashLink(res.txHash);
+          setTradeInput('');
+        } else {
+          setFeedback({ type: 'error', text: res.message });
+        }
+      } else {
+        if (userTokenBalance < parsedInput) {
+          setFeedback({
+            type: 'error',
+            text: `Insufficient ${token.symbol} balance (You own ${userTokenBalance.toLocaleString()})`,
+          });
+          setIsTrading(false);
+          return;
+        }
+
+        const res = await executeTrade({
+          mint: token.mint,
+          type: 'sell',
+          ethAmount: sellSim?.ethReceived || 0,
+          tokenAmount: parsedInput,
+          wallet: publicKey || '0x71C8...3999',
         });
-        return;
+
+        if (res.success) {
+          setFeedback({
+            type: 'success',
+            text: `Sold ${parsedInput.toLocaleString()} ${token.symbol} on Arbitrum Sepolia!`,
+          });
+          if (res.txHash) setTxHashLink(res.txHash);
+          setTradeInput('');
+        } else {
+          setFeedback({ type: 'error', text: res.message });
+        }
       }
-
-      // Trigger real wallet confirmation
-      const tx = await sendRealTransaction({
-        to: token.mint,
-        valueEth: 0,
-      });
-
-      if (!tx.success) {
-        setFeedback({ type: 'error', text: tx.error || 'Transaction rejected in wallet' });
-        return;
-      }
-
-      const res = executeTrade({
-        mint: token.mint,
-        type: 'sell',
-        ethAmount: sellSim?.ethReceived || 0,
-        tokenAmount: parsedInput,
-        wallet: publicKey || '0x71C8...3999',
-      });
-
-      if (res.success && res.ethDiff) {
-        updateUserTokens(token.mint, -parsedInput);
-        setFeedback({
-          type: 'success',
-          text: `Sold ${parsedInput.toLocaleString()} ${token.symbol} for $${(res.ethDiff * ETH_PRICE_USD).toFixed(2)}!`,
-        });
-        setTradeInput('');
-      }
+    } catch (err: any) {
+      setFeedback({ type: 'error', text: err?.message || 'Transaction failed' });
+    } finally {
+      setIsTrading(false);
     }
   };
 
@@ -355,6 +352,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
                         <th className="pb-2 font-normal">{token.symbol}</th>
                         <th className="pb-2 font-normal">Price USD</th>
                         <th className="pb-2 font-normal">Trader</th>
+                        <th className="pb-2 font-normal">Tx Hash</th>
                         <th className="pb-2 font-normal text-right">Time</th>
                       </tr>
                     </thead>
@@ -377,6 +375,20 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
                           <td className="py-2.5">{tr.tokenAmount.toLocaleString()}</td>
                           <td className="py-2.5">${tr.priceUsd.toFixed(6)}</td>
                           <td className="py-2.5 text-[rgb(var(--muted))]">{tr.wallet}</td>
+                          <td className="py-2.5 text-[rgb(var(--muted))]">
+                            {tr.txHash ? (
+                              <a
+                                href={`https://sepolia.arbiscan.io/tx/${tr.txHash}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[#00C805] hover:underline"
+                              >
+                                {tr.txHash.slice(0, 8)}…
+                              </a>
+                            ) : (
+                              '—'
+                            )}
+                          </td>
                           <td className="py-2.5 text-right text-[rgb(var(--muted))]">
                             {Math.round((Date.now() - tr.timestamp) / 1000 / 60)}m ago
                           </td>
@@ -665,7 +677,19 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
                     : 'border border-[rgb(var(--down))] bg-[rgb(var(--down))]/10 text-[rgb(var(--down))]'
                 }`}
               >
-                {feedback.text}
+                <div>{feedback.text}</div>
+                {txHashLink && (
+                  <div className="mt-1.5">
+                    <a
+                      href={`https://sepolia.arbiscan.io/tx/${txHashLink}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline font-bold inline-flex items-center gap-1 hover:opacity-80"
+                    >
+                      View on Arbiscan ({txHashLink.slice(0, 10)}…) ↗
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 
@@ -681,13 +705,20 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
             ) : (
               <button
                 type="submit"
-                className={`w-full py-3 font-pixel text-sm font-bold justify-center rounded-full text-white transition ${
+                disabled={isTrading}
+                className={`w-full py-3 font-pixel text-sm font-bold justify-center rounded-full text-white transition disabled:opacity-50 ${
                   tradeType === 'buy'
                     ? 'bg-[#00C805] hover:brightness-110'
                     : 'bg-[rgb(var(--down))] hover:brightness-110'
                 }`}
               >
-                {tradeType === 'buy' ? `Review Buy Order` : `Review Sell Order`}
+                {isTrading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Activity className="h-4 w-4 animate-spin" /> Signing on Arbitrum Sepolia…
+                  </span>
+                ) : (
+                  tradeType === 'buy' ? `Execute Buy Order` : `Execute Sell Order`
+                )}
               </button>
             )}
           </form>

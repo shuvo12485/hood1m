@@ -51,29 +51,17 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
     }
 
     if (balanceEth < totalEthRequired) {
-      alert(`Insufficient balance. You need at least ${totalEthRequired.toFixed(3)} ETH.`);
+      alert(`Insufficient balance. You need at least ${totalEthRequired.toFixed(3)} ETH on Arbitrum Sepolia.`);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // Trigger real wallet transaction
-      const tx = await sendRealTransaction({
-        to: '0x000000000000000000000000000000000000dEaD',
-        valueEth: totalEthRequired,
-      });
-
-      if (!tx.success) {
-        alert(tx.error || 'Wallet transaction was rejected');
-        setIsSubmitting(false);
-        return;
-      }
-
-      const newToken = await createToken({
+      const res = await createToken({
         name,
         symbol: symbol.toUpperCase(),
-        description: description || `${name} launched on Robinhood Web3 starting at $1,000,000 FDV.`,
-        image: imageUrl || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=200&auto=format&fit=crop&q=80',
+        description: description || `${name} launched on Hood1M starting at $1,000,000 FDV.`,
+        image: imageUrl || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&auto=format&fit=crop&q=80',
         creator: publicKey || '0x71C8...3999',
         initialBuyEth: buyAmount,
         twitter: twitter || undefined,
@@ -81,10 +69,10 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
         website: website || undefined,
       });
 
-      navigate(`/token/${newToken.mint}`);
-    } catch (err) {
+      navigate(`/token/${res.token.mint}`);
+    } catch (err: any) {
       console.error(err);
-      alert('Failed to launch token');
+      alert('Failed to launch token: ' + (err?.message || 'Transaction rejected'));
     } finally {
       setIsSubmitting(false);
     }

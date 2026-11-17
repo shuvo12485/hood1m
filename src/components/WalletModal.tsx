@@ -176,8 +176,30 @@ export const WalletModal: React.FC = () => {
           </div>
         </div>
 
+        {/* Network & Faucet Notice */}
+        <div className="mt-5 rounded-xl border border-[#00C805]/30 bg-[#00C805]/5 p-3.5 font-mono text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-[#00C805]">
+            <span className="h-2 w-2 rounded-full bg-[#00C805] animate-pulse"></span>
+            Arbitrum Sepolia Live Network
+          </div>
+          <p className="mt-1 text-[rgb(var(--muted))] leading-relaxed text-[11px]">
+            Hood1M connects to real smart contracts on Arbitrum Sepolia Testnet (421614). Test deployments & swaps with zero monetary risk.
+          </p>
+          <div className="mt-2.5 pt-2 border-t border-[rgb(var(--line))] flex justify-between items-center text-[11px]">
+            <span className="text-[rgb(var(--muted))]">Need free testnet ETH?</span>
+            <a
+              href="https://faucets.chain.link/arbitrum-sepolia"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[#00C805] font-bold hover:underline inline-flex items-center gap-1"
+            >
+              Get Free ETH <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        </div>
+
         {/* Footer info */}
-        <div className="mt-6 border-t border-[rgb(var(--line))] pt-4 text-center">
+        <div className="mt-5 border-t border-[rgb(var(--line))] pt-3 text-center">
           <p className="font-mono text-[11px] text-[rgb(var(--muted))]">
             By connecting a wallet, you agree to the Terms of Service.
           </p>

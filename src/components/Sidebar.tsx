@@ -1,6 +1,7 @@
 import React from 'react';
-import { Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle } from 'lucide-react';
+import { Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle, Droplet, ArrowRightLeft } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
+import { useTokens } from '../context/TokensContext';
 import { BrandLogo } from './BrandLogo';
 
 interface SidebarProps {
@@ -11,7 +12,17 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQuery, setSearchQuery }) => {
-  const { connected, publicKey, balanceEth, balanceUsd, openWalletModal, disconnect } = useWallet();
+  const {
+    connected,
+    publicKey,
+    balanceEth,
+    balanceUsd,
+    isArbitrumSepolia,
+    switchToArbitrumSepolia,
+    openWalletModal,
+    disconnect,
+  } = useWallet();
+  const { ethPriceUsd } = useTokens();
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
@@ -102,24 +113,48 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQ
             ></path>
           </svg>
           <div className="mt-1 flex justify-between font-mono text-[10px] text-[rgb(var(--muted))]">
-            <span>Arbitrum L2</span>
-            <span>Uniswap v3 Pool</span>
+            <span>Arbitrum Sepolia</span>
+            <span className="font-semibold text-[rgb(var(--ink))]">ETH: ${ethPriceUsd.toFixed(0)}</span>
           </div>
+        </div>
+
+        {/* Network & Faucet Tools */}
+        <div className="space-y-2">
+          {connected && !isArbitrumSepolia && (
+            <button
+              onClick={() => switchToArbitrumSepolia()}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 font-mono text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition"
+            >
+              <ArrowRightLeft className="h-3.5 w-3.5" /> Switch to Arbitrum Sepolia
+            </button>
+          )}
+
+          <a
+            href="https://faucets.chain.link/arbitrum-sepolia"
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[rgb(var(--line))] bg-[rgb(var(--raised))]/40 px-3 py-1.5 font-mono text-[11px] font-semibold text-[rgb(var(--ink))] hover:border-[#00C805] hover:text-[#00C805] transition"
+          >
+            <Droplet className="h-3.5 w-3.5 text-[#00C805]" /> Get Free Testnet ETH ↗
+          </a>
         </div>
 
         {/* Wallet Connection / Buying Power */}
         <div className="mt-auto flex flex-col gap-3">
           {connected && publicKey ? (
             <div className="rounded-xl border border-[rgb(var(--line))] bg-[rgb(var(--raised))]/60 p-3">
-              <div className="text-[10px] font-mono uppercase tracking-wider text-[rgb(var(--muted))]">
-                Buying Power
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[rgb(var(--muted))]">
+                <span>Buying Power</span>
+                <span className="flex items-center gap-1 text-[#00C805] font-bold">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#00C805]"></span> Arbitrum
+                </span>
               </div>
               <div className="mt-0.5 font-pixel text-base font-bold text-[#00C805]">
                 ${balanceUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="flex items-center justify-between mt-1 text-[11px] font-mono text-[rgb(var(--muted))]">
                 <span>{publicKey}</span>
-                <span>{balanceEth.toFixed(3)} ETH</span>
+                <span>{balanceEth.toFixed(4)} ETH</span>
               </div>
               <button
                 onClick={disconnect}
