@@ -331,3 +331,45 @@
 .animate-marquee {
   animation: marquee 25s linear infinite;
 }
+
+.font-display {
+  font-family: 'Syne', 'Outfit', system-ui, sans-serif;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+
+.font-outfit {
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+@keyframes auroraPulse {
+  0%, 100% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(-50%, -15px) scale(1.08);
+    opacity: 1;
+  }
+}
+
+.animate-aurora-pulse {
+  animation: auroraPulse 8s ease-in-out infinite;
+}
+
+@keyframes greenFlash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 200, 5, 0.7);
+    border-color: #00FF66;
+  }
+  70% {
+    box-shadow: 0 0 25px 5px rgba(0, 200, 5, 0);
+  }
+  100% {
+    border-color: rgb(var(--line));
+  }
+}
+
+.flash-buy {
+  animation: greenFlash 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}

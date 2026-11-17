@@ -27,21 +27,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQ
   ];
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] border-r border-[rgb(var(--line))] bg-[rgb(var(--card))] lg:block">
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] border-r border-white/10 bg-[#0B0F17]/95 backdrop-blur-xl lg:block shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
       <div className="flex h-full flex-col gap-5 overflow-y-auto px-5 py-6">
         {/* Brand Logo - Hood1M */}
         <button
           onClick={() => navigate('/')}
           className="group flex items-center gap-3 text-left transition"
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black border border-white/10 shadow-sm transition duration-300 group-hover:-translate-y-0.5">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black border border-[#00C805]/40 shadow-[0_0_20px_rgba(0,200,5,0.25)] transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_0_25px_rgba(0,200,5,0.5)]">
             <BrandLogo variant="feather-arrow" size={26} />
           </div>
           <span className="leading-none">
-            <span className="block font-pixel text-[22px] font-bold tracking-[-0.03em] text-[rgb(var(--ink))]">
+            <span className="block font-display text-[23px] font-black tracking-tight text-white">
               Hood<span className="text-[#00C805]">1M</span>
             </span>
-            <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-[#00C805] font-bold">
+            <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-[#00FF66] font-bold">
               $1,000,000 Floor
             </span>
           </span>

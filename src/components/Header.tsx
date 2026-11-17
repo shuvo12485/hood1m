@@ -27,10 +27,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-[rgb(var(--line))] bg-[rgb(var(--card))]/95 px-4 backdrop-blur-md lg:hidden">
+      <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-white/10 bg-[#0B0F17]/95 px-4 backdrop-blur-xl lg:hidden shadow-lg">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgb(var(--line))] text-[rgb(var(--ink))] transition hover:border-[rgb(var(--ink))]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-white transition hover:border-[#00C805]"
           aria-label="Open menu"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -38,12 +38,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 font-pixel text-lg font-bold"
+          className="flex items-center gap-2 font-display text-lg font-bold"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black border border-white/10 shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black border border-[#00C805]/40 shadow-[0_0_12px_rgba(0,200,5,0.3)]">
             <BrandLogo variant="feather-arrow" size={22} />
           </div>
-          <span className="hidden tracking-[-0.03em] min-[400px]:inline text-[rgb(var(--ink))]">
+          <span className="hidden tracking-tight min-[400px]:inline text-white">
             Hood<span className="text-[#00C805]">1M</span>
           </span>
         </button>

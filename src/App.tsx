@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { CyberBackground } from './components/CyberBackground';
 import { WalletModal } from './components/WalletModal';
 import { HomePage } from './pages/HomePage';
 import { ExplorePage } from './pages/ExplorePage';
@@ -94,7 +95,9 @@ export function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--paper))] text-[rgb(var(--ink))]">
+    <div className="relative min-h-screen bg-[rgb(var(--paper))] text-[rgb(var(--ink))]">
+      {/* Dynamic Cyber Aurora & Grid Background */}
+      <CyberBackground />
       {/* Desktop Fixed Left Navigation */}
       <Sidebar
         currentPath={currentPath}

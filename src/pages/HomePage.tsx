@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { HeroMonitor } from '../components/HeroMonitor';
+import { HeroInteractivePortal } from '../components/HeroInteractivePortal';
 import { AsciiArtAnimation } from '../components/AsciiArtAnimation';
 import { AsciiTicker } from '../components/AsciiTicker';
 import { CoinCard } from '../components/CoinCard';
 import { TopPerformersTable } from '../components/TopPerformersTable';
 import { QuickLaunchCard } from '../components/QuickLaunchCard';
 import { useTokens } from '../context/TokensContext';
-import { Rocket, BarChart2, DollarSign, Award, Terminal } from 'lucide-react';
+import { Rocket, BarChart2, DollarSign, Award, Terminal, Zap, Sparkles } from 'lucide-react';
 
 interface HomePageProps {
   navigate: (path: string) => void;
@@ -15,7 +16,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const { tokens, stats } = useTokens();
   const [clubTab, setClubTab] = useState<'1m' | '5m' | '10m'>('1m');
-  const [heroView, setHeroView] = useState<'ascii' | 'vector'>('vector');
+  const [heroView, setHeroView] = useState<'portal' | 'vector' | 'ascii'>('portal');
 
   const handleQuickLaunch = async (name: string, ticker: string) => {
     navigate(`/launch?name=${encodeURIComponent(name)}&ticker=${encodeURIComponent(ticker)}`);
@@ -44,61 +45,78 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           Hood1M · Robinhood Web3 · Arbitrum L2 · Uniswap v3
         </div>
 
-        <h1 className="h-display mx-auto mt-4 max-w-3xl text-[40px] min-[420px]:text-[50px] sm:text-[76px] leading-[1.05]">
-          <span className="mx-auto block w-fit">Every coin starts at</span>
-          <span className="mx-auto block w-fit text-[#00C805]">
-            $1,000,000<span className="text-[rgb(var(--ink))]">.</span>
+        <h1 className="font-display mx-auto mt-5 max-w-4xl text-[44px] min-[420px]:text-[56px] sm:text-[80px] font-black tracking-tight leading-[1.02]">
+          <span className="block text-white">Every coin starts at</span>
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00C805] via-[#00FF88] to-[#86EFAC] drop-shadow-[0_0_40px_rgba(0,200,5,0.45)]">
+            $1,000,000<span className="text-white">.</span>
           </span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-md text-lg text-[rgb(var(--muted))] leading-relaxed">
-          <span className="mx-auto block w-fit">Same starting FDV for everyone.</span>
-          <span className="mx-auto block w-fit">Commission-free trading on Robinhood Web3.</span>
+        <p className="font-outfit mx-auto mt-6 max-w-lg text-lg text-slate-300 leading-relaxed font-normal">
+          <span className="mx-auto block w-fit">Equal starting valuation for all Web3 creators.</span>
+          <span className="mx-auto block w-fit text-slate-400">Commission-free trading on Arbitrum L2 · Uniswap v3.</span>
         </p>
 
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3.5">
           <button
             onClick={() => navigate('/launch')}
-            className="btn-dark px-7 py-3 text-[15px]"
+            className="btn-dark px-8 py-3.5 text-base font-bold flex items-center gap-2"
           >
-            Create a millionaire →
+            <Sparkles className="h-4 w-4" />
+            Create a Token ($1M Floor) →
           </button>
           <button
             onClick={() => navigate('/explore')}
-            className="btn-light px-7 py-3 text-[15px]"
+            className="btn-light px-8 py-3.5 text-base font-semibold"
           >
-            Explore coins
+            Explore Millionaires
           </button>
         </div>
 
-        {/* View Switcher: ASCII Animation vs Vector Monitor */}
-        <div className="mx-auto mt-9 flex w-fit items-center gap-1 rounded-full border border-[#00C805]/30 bg-[#070b09]/80 p-1 font-mono text-xs shadow-sm">
+        {/* View Switcher: 3D Hologram vs Vector Monitor vs ASCII */}
+        <div className="mx-auto mt-10 flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-[#0E141F]/80 p-1.5 font-mono text-xs shadow-lg backdrop-blur-md">
           <button
-            onClick={() => setHeroView('ascii')}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs transition cursor-pointer ${
-              heroView === 'ascii'
-                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_12px_rgba(0,200,5,0.4)]'
-                : 'text-[rgb(var(--muted))] hover:text-white'
+            onClick={() => setHeroView('portal')}
+            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition cursor-pointer ${
+              heroView === 'portal'
+                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_15px_rgba(0,200,5,0.5)]'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Terminal className="h-3.5 w-3.5" />
-            ASCII 3D Terminal
+            <Zap className="h-3.5 w-3.5" />
+            3D Holographic Core
           </button>
           <button
             onClick={() => setHeroView('vector')}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs transition cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition cursor-pointer ${
               heroView === 'vector'
-                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_12px_rgba(0,200,5,0.4)]'
-                : 'text-[rgb(var(--muted))] hover:text-white'
+                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_15px_rgba(0,200,5,0.5)]'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <BarChart2 className="h-3.5 w-3.5" />
-            Vector Monitor
+            Chart Monitor
+          </button>
+          <button
+            onClick={() => setHeroView('ascii')}
+            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition cursor-pointer ${
+              heroView === 'ascii'
+                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_15px_rgba(0,200,5,0.5)]'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Terminal className="h-3.5 w-3.5" />
+            ASCII Terminal
           </button>
         </div>
 
-        {heroView === 'ascii' ? (
-          <div className="mx-auto mt-4 max-w-[860px]">
+        {heroView === 'portal' ? (
+          <HeroInteractivePortal
+            navigate={navigate}
+            onQuickLaunch={handleQuickLaunch}
+          />
+        ) : heroView === 'ascii' ? (
+          <div className="mx-auto mt-6 max-w-[860px]">
             <AsciiArtAnimation initialMode="donut" />
           </div>
         ) : (

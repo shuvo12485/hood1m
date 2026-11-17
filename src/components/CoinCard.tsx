@@ -19,7 +19,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({ token, onSelect }) => {
   return (
     <div
       onClick={() => onSelect(token.mint)}
-      className="panel group flex cursor-pointer flex-col p-4.5 transition duration-150 hover:-translate-y-1 hover:border-[rgb(var(--ink))] hover:shadow-md"
+      className="panel group flex cursor-pointer flex-col p-4.5 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#00C805]/60 hover:shadow-[0_12px_35px_rgba(0,200,5,0.16)] bg-[#101622]/90 backdrop-blur-md"
     >
       <div className="flex items-start gap-3.5">
         <img
@@ -62,10 +62,12 @@ export const CoinCard: React.FC<CoinCardProps> = ({ token, onSelect }) => {
           <span>Graduation ({token.ethReserve.toFixed(1)} / {GRADUATION_ETH_THRESHOLD} ETH)</span>
           <span className="font-bold text-[rgb(var(--ink))]">{progressPercent}%</span>
         </div>
-        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-[rgb(var(--raised))]">
+        <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-black/50 p-0.5 border border-white/5">
           <div
-            className={`h-full transition-all duration-300 ${
-              token.graduated ? 'bg-[rgb(var(--strong))]' : 'bg-[#00C805]'
+            className={`h-full rounded-full transition-all duration-300 ${
+              token.graduated
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-500'
+                : 'bg-gradient-to-r from-[#00C805] to-[#00FF88] shadow-[0_0_8px_#00C805]'
             }`}
             style={{ width: `${progressPercent}%` }}
           />
