@@ -19,7 +19,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({ token, onSelect }) => {
   return (
     <div
       onClick={() => onSelect(token.mint)}
-      className="panel group flex cursor-pointer flex-col p-4.5 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#00C805]/60 hover:shadow-[0_12px_35px_rgba(0,200,5,0.16)] bg-[#101622]/90 backdrop-blur-md"
+      className="panel group flex cursor-pointer flex-col p-4.5 transition-all duration-150 hover:-translate-y-1 hover:border-[#00C805]/50 hover:bg-[#131A26] bg-[#0F141D] border border-[#1F2735]"
     >
       <div className="flex items-start gap-3.5">
         <img

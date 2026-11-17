@@ -16,7 +16,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const { tokens, stats } = useTokens();
   const [clubTab, setClubTab] = useState<'1m' | '5m' | '10m'>('1m');
-  const [heroView, setHeroView] = useState<'portal' | 'vector' | 'ascii'>('portal');
+  const [heroView, setHeroView] = useState<'portal' | 'vector' | 'ascii'>('vector');
 
   const handleQuickLaunch = async (name: string, ticker: string) => {
     navigate(`/launch?name=${encodeURIComponent(name)}&ticker=${encodeURIComponent(ticker)}`);
@@ -45,16 +45,16 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           Hood1M · Robinhood Web3 · Arbitrum L2 · Uniswap v3
         </div>
 
-        <h1 className="font-display mx-auto mt-5 max-w-4xl text-[44px] min-[420px]:text-[56px] sm:text-[80px] font-black tracking-tight leading-[1.02]">
+        <h1 className="font-display mx-auto mt-6 max-w-4xl text-[46px] min-[420px]:text-[60px] sm:text-[84px] font-black tracking-tight leading-[1.01]">
           <span className="block text-white">Every coin starts at</span>
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00C805] via-[#00FF88] to-[#86EFAC] drop-shadow-[0_0_40px_rgba(0,200,5,0.45)]">
+          <span className="block text-[#00C805]">
             $1,000,000<span className="text-white">.</span>
           </span>
         </h1>
 
-        <p className="font-outfit mx-auto mt-6 max-w-lg text-lg text-slate-300 leading-relaxed font-normal">
-          <span className="mx-auto block w-fit">Equal starting valuation for all Web3 creators.</span>
-          <span className="mx-auto block w-fit text-slate-400">Commission-free trading on Arbitrum L2 · Uniswap v3.</span>
+        <p className="font-outfit mx-auto mt-6 max-w-lg text-lg text-[#8B95A5] leading-relaxed font-normal">
+          <span className="mx-auto block w-fit">Same $1M starting valuation for everyone.</span>
+          <span className="mx-auto block w-fit">Commission-free trading on Arbitrum L2 · Uniswap v3.</span>
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3.5">
