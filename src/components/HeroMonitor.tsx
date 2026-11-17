@@ -20,18 +20,18 @@ export const HeroMonitor: React.FC = () => {
         </defs>
 
         {/* Monitor Stand */}
-        <path d="M334 380L318 444M426 380L442 444" stroke="rgb(var(--ink))" strokeWidth="1.5"></path>
-        <rect x="250" y="444" width="260" height="12" rx="6" fill="rgb(var(--card))" stroke="rgb(var(--ink))" strokeWidth="1.5"></rect>
+        <path d="M334 380L318 444M426 380L442 444" stroke="rgb(var(--line))" strokeWidth="2"></path>
+        <rect x="250" y="444" width="260" height="12" rx="6" fill="rgb(var(--card))" stroke="rgb(var(--line))" strokeWidth="1.5"></rect>
 
         {/* Outer Bezel */}
-        <rect x="36" y="14" width="700" height="372" rx="20" fill="rgb(var(--ink))"></rect>
-        <rect x="30" y="8" width="700" height="372" rx="20" fill="rgb(var(--card))" stroke="rgb(var(--ink))" strokeWidth="1.5"></rect>
+        <rect x="36" y="14" width="700" height="372" rx="20" fill="rgba(0,0,0,0.6)"></rect>
+        <rect x="30" y="8" width="700" height="372" rx="20" fill="rgb(var(--card))" stroke="rgb(var(--line))" strokeWidth="1.5"></rect>
         <rect x="44" y="22" width="672" height="344" rx="10" fill="rgb(var(--paper))" stroke="rgb(var(--line))"></rect>
 
         {/* Window controls */}
-        <circle cx="62" cy="40" r="3.6" fill="none" stroke="rgb(var(--ink))" strokeWidth="1.1"></circle>
-        <circle cx="75" cy="40" r="3.6" fill="none" stroke="rgb(var(--ink))" strokeWidth="1.1"></circle>
-        <circle cx="88" cy="40" r="3.6" fill="none" stroke="rgb(var(--ink))" strokeWidth="1.1"></circle>
+        <circle cx="62" cy="40" r="3.6" fill="none" stroke="rgb(var(--muted))" strokeWidth="1.1"></circle>
+        <circle cx="75" cy="40" r="3.6" fill="none" stroke="rgb(var(--muted))" strokeWidth="1.1"></circle>
+        <circle cx="88" cy="40" r="3.6" fill="none" stroke="rgb(var(--muted))" strokeWidth="1.1"></circle>
 
         {/* Header Text */}
         <text x="108" y="44" fontSize="11" fill="rgb(var(--muted))" letterSpacing="1.5" className="font-mono">
@@ -55,7 +55,7 @@ export const HeroMonitor: React.FC = () => {
             $1M
           </text>
           <g>
-            <rect x="572" y="290.5" width="85" height="20" rx="10" fill="rgb(var(--card))" stroke="rgb(var(--ink))" strokeOpacity=".5"></rect>
+            <rect x="572" y="290.5" width="85" height="20" rx="10" fill="rgb(var(--card))" stroke="rgb(var(--line))"></rect>
             <text x="579" y="304.1" fontSize="9.5" fill="rgb(var(--ink))" letterSpacing=".6" className="font-mono font-semibold">
               MILLIONAIRE
             </text>
@@ -64,12 +64,12 @@ export const HeroMonitor: React.FC = () => {
 
         {/* $2M Milestone */}
         <g>
-          <path d="M108 240.1H564" stroke="rgb(var(--ink))" strokeOpacity=".16" strokeDasharray="3 5"></path>
+          <path d="M108 240.1H564" stroke="rgb(var(--line))" strokeDasharray="3 5"></path>
           <text x="96" y="244.1" fontSize="12" textAnchor="end" fill="rgb(var(--muted))" className="font-mono">
             $2M
           </text>
           <g>
-            <rect x="572" y="230.1" width="124" height="20" rx="10" fill="rgb(var(--card))" stroke="rgb(var(--ink))" strokeOpacity=".5"></rect>
+            <rect x="572" y="230.1" width="124" height="20" rx="10" fill="rgb(var(--card))" stroke="rgb(var(--line))"></rect>
             <text x="579" y="243.7" fontSize="9.5" fill="rgb(var(--ink))" letterSpacing=".6" className="font-mono font-semibold">
               MULTI-MILLIONAIRE
             </text>

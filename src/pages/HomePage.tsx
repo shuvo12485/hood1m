@@ -15,7 +15,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const { tokens, stats } = useTokens();
   const [clubTab, setClubTab] = useState<'1m' | '5m' | '10m'>('1m');
-  const [heroView, setHeroView] = useState<'ascii' | 'vector'>('ascii');
+  const [heroView, setHeroView] = useState<'ascii' | 'vector'>('vector');
 
   const handleQuickLaunch = async (name: string, ticker: string) => {
     navigate(`/launch?name=${encodeURIComponent(name)}&ticker=${encodeURIComponent(ticker)}`);

@@ -103,25 +103,25 @@ export const PriceChart: React.FC<PriceChartProps> = ({ token }) => {
       height: 360,
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: 'rgb(112, 112, 104)',
+        textColor: '#94A3B8',
         fontFamily: "'JetBrains Mono', monospace",
         fontSize: 11,
       },
       grid: {
-        vertLines: { color: 'rgba(16, 17, 15, 0.05)', style: 1 },
-        horzLines: { color: 'rgba(16, 17, 15, 0.05)', style: 1 },
+        vertLines: { color: 'rgba(255, 255, 255, 0.04)', style: 1 },
+        horzLines: { color: 'rgba(255, 255, 255, 0.04)', style: 1 },
       },
       crosshair: {
-        vertLine: { color: 'rgb(16, 17, 15)', width: 1, style: 2 },
-        horzLine: { color: 'rgb(16, 17, 15)', width: 1, style: 2 },
+        vertLine: { color: 'rgba(0, 200, 5, 0.6)', width: 1, style: 2 },
+        horzLine: { color: 'rgba(0, 200, 5, 0.6)', width: 1, style: 2 },
       },
       timeScale: {
-        borderColor: 'rgb(222, 220, 211)',
+        borderColor: 'rgba(255, 255, 255, 0.08)',
         timeVisible: true,
         secondsVisible: false,
       },
       rightPriceScale: {
-        borderColor: 'rgb(222, 220, 211)',
+        borderColor: 'rgba(255, 255, 255, 0.08)',
         scaleMargins: {
           top: 0.1,
           bottom: 0.2, // Leave space for volume histogram
@@ -131,7 +131,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({ token }) => {
 
     // Up green matches Robinhood/Millionaires green #00C805 / #00995C
     const upColor = '#00C805';
-    const downColor = '#D63434';
+    const downColor = '#EF4444';
 
     // Add Candlestick Series
     const candleSeries = chart.addSeries(CandlestickSeries, {
@@ -149,7 +149,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({ token }) => {
 
     // Add Volume Series at bottom
     const volumeSeries = chart.addSeries(HistogramSeries, {
-      color: 'rgba(16, 17, 15, 0.12)',
+      color: 'rgba(255, 255, 255, 0.08)',
       priceFormat: {
         type: 'volume',
       },

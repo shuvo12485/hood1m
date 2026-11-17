@@ -122,7 +122,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQ
                 onClick={toggleTheme}
                 className="rounded border border-[#00C805]/30 bg-[#00C805]/10 px-2 py-0.5 text-[10px] font-bold text-[#00C805] hover:bg-[#00C805]/20 cursor-pointer transition"
               >
-                {theme === 'terminal' ? '⚡ ASCII TERMINAL' : '📜 RETRO PAPER'}
+                {theme === 'fintech-dark'
+                  ? '💎 FINTECH DARK'
+                  : theme === 'terminal'
+                  ? '⚡ ASCII TERMINAL'
+                  : '📜 RETRO PAPER'}
               </button>
             </div>
           </div>

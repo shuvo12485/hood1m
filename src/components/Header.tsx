@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
             className="rounded-full border border-[#00C805]/30 bg-[#00C805]/10 px-2 py-1 font-mono text-[10px] font-bold text-[#00C805]"
             title="Toggle theme"
           >
-            {theme === 'terminal' ? '⚡ ASCII' : '📜 PAPER'}
+            {theme === 'fintech-dark' ? '💎 DARK' : theme === 'terminal' ? '⚡ ASCII' : '📜 PAPER'}
           </button>
           {connected && publicKey ? (
             <div className="flex items-center gap-2 rounded-full border border-[rgb(var(--line))] bg-[rgb(var(--card))] px-3 py-1 font-mono text-xs">

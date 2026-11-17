@@ -2,22 +2,43 @@
 
 @layer base {
   :root {
-    --paper: 8 13 10;     /* #080D0A cyber slate */
-    --card: 14 20 16;     /* #0E1410 dark terminal panel */
-    --raised: 20 30 24;   /* #141E18 */
-    --ink: 232 245 236;   /* #E8F5EC neon off-white */
-    --muted: 120 155 130; /* #789B82 soft phosphor */
-    --line: 28 44 34;     /* #1C2C22 border line */
-    --accent: 0 200 5;    /* #00C805 Robinhood emerald */
+    --paper: 11 15 22;    /* #0B0F16 sleek matte charcoal obsidian */
+    --card: 18 24 35;     /* #121823 refined elevated card slate */
+    --raised: 26 34 48;   /* #1A2230 hover / subtle contrast */
+    --ink: 248 250 252;   /* #F8FAFC crisp pure white */
+    --muted: 148 163 184; /* #94A3B8 cool slate text */
+    --line: 33 43 60;     /* #212B3C crisp modern border line */
+    --accent: 0 200 5;    /* #00C805 Robinhood emerald green */
     --accent-ink: 0 0 0;
     --strong: 0 200 5;
     --strong-ink: 0 0 0;
     --pill: 0 200 5;
-    --up: 0 230 0;
-    --down: 255 70 70;
-    --warn: 255 180 0;
-    --as-grid: rgba(0, 200, 5, 0.08);
-    --as-ghost: rgba(0, 200, 5, 0.3);
+    --up: 0 200 5;
+    --down: 239 68 68;    /* #EF4444 modern red */
+    --warn: 245 158 11;   /* #F59E0B amber */
+    --as-grid: rgba(255, 255, 255, 0.04);
+    --as-ghost: rgba(255, 255, 255, 0.15);
+    color-scheme: dark;
+  }
+
+  html.theme-fintech-dark,
+  .theme-fintech-dark {
+    --paper: 11 15 22;    /* #0B0F16 */
+    --card: 18 24 35;     /* #121823 */
+    --raised: 26 34 48;   /* #1A2230 */
+    --ink: 248 250 252;   /* #F8FAFC */
+    --muted: 148 163 184; /* #94A3B8 */
+    --line: 33 43 60;     /* #212B3C */
+    --accent: 0 200 5;    /* #00C805 */
+    --accent-ink: 0 0 0;
+    --strong: 0 200 5;
+    --strong-ink: 0 0 0;
+    --pill: 0 200 5;
+    --up: 0 200 5;
+    --down: 239 68 68;
+    --warn: 245 158 11;
+    --as-grid: rgba(255, 255, 255, 0.04);
+    --as-ghost: rgba(255, 255, 255, 0.15);
     color-scheme: dark;
   }
 
@@ -114,13 +135,14 @@
   border-radius: 1rem;
   border: 1px solid rgb(var(--line));
   background-color: rgb(var(--card));
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.4);
 }
 
 .panel-dark {
   border-radius: 1rem;
-  border: 1px solid rgb(var(--ink));
-  background-color: rgb(var(--strong));
-  color: rgb(var(--strong-ink));
+  border: 1px solid rgb(var(--line));
+  background-color: rgb(var(--raised));
+  color: rgb(var(--ink));
 }
 
 .btn-dark {
@@ -129,21 +151,23 @@
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  border: 1px solid rgb(var(--strong));
-  background-color: rgb(var(--strong));
+  background-color: #00C805;
+  border: 1px solid #00C805;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
-  font-weight: 600;
-  color: rgb(var(--strong-ink));
-  transition: all 0.15s ease-in-out;
+  font-weight: 700;
+  color: #000000;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 16px rgba(0, 200, 5, 0.25);
   cursor: pointer;
 }
 
 .btn-dark:hover {
   transform: translateY(-1px);
-  background-color: rgb(var(--accent));
-  border-color: rgb(var(--accent));
-  color: rgb(var(--accent-ink));
+  background-color: #00E600;
+  border-color: #00E600;
+  color: #000000;
+  box-shadow: 0 0 24px rgba(0, 200, 5, 0.45);
 }
 
 .btn-light {
@@ -152,20 +176,20 @@
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  border: 1px solid rgba(16, 17, 15, 0.25);
-  background-color: rgb(var(--card));
+  border: 1px solid rgb(var(--line));
+  background-color: rgb(var(--raised));
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 600;
   color: rgb(var(--ink));
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .btn-light:hover {
   transform: translateY(-1px);
-  background-color: rgb(var(--raised));
-  border-color: rgb(var(--ink));
+  border-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .chip {
@@ -184,17 +208,18 @@
   width: 100%;
   border-radius: 0.75rem;
   border: 1px solid rgb(var(--line));
-  background-color: rgb(var(--card));
+  background-color: rgba(255, 255, 255, 0.03);
   padding: 0.5rem 0.875rem;
   color: rgb(var(--ink));
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.8125rem;
 }
 
 .input:focus {
-  border-color: rgb(var(--ink));
+  border-color: #00C805;
+  box-shadow: 0 0 0 2px rgba(0, 200, 5, 0.2);
 }
 
 .input-dark {
@@ -203,7 +228,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   background-color: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 0.875rem;
-  color: rgb(var(--strong-ink));
+  color: rgb(var(--ink));
   outline: none;
   transition: border-color 0.15s;
   font-family: 'JetBrains Mono', monospace;
@@ -211,7 +236,8 @@
 }
 
 .input-dark:focus {
-  border-color: rgb(var(--accent));
+  border-color: #00C805;
+  box-shadow: 0 0 0 2px rgba(0, 200, 5, 0.2);
 }
 
 .tab {
@@ -226,16 +252,17 @@
 
 .tab:hover {
   color: rgb(var(--ink));
-  background-color: rgba(16, 17, 15, 0.04);
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .tab-on {
   padding: 0.375rem 0.875rem;
   border-radius: 0.5rem;
   font-size: 0.75rem;
-  font-weight: 600;
-  background-color: rgb(var(--strong));
-  color: rgb(var(--strong-ink));
+  font-weight: 700;
+  background-color: #00C805;
+  color: #000000;
+  box-shadow: 0 0 12px rgba(0, 200, 5, 0.3);
   cursor: pointer;
 }
 
