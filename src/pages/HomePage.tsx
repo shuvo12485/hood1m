@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { HeroMonitor } from '../components/HeroMonitor';
+import { AsciiArtAnimation } from '../components/AsciiArtAnimation';
+import { AsciiTicker } from '../components/AsciiTicker';
 import { CoinCard } from '../components/CoinCard';
 import { TopPerformersTable } from '../components/TopPerformersTable';
 import { QuickLaunchCard } from '../components/QuickLaunchCard';
 import { useTokens } from '../context/TokensContext';
-import { Rocket, BarChart2, DollarSign, Award } from 'lucide-react';
+import { Rocket, BarChart2, DollarSign, Award, Terminal } from 'lucide-react';
 
 interface HomePageProps {
   navigate: (path: string) => void;
@@ -13,6 +15,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const { tokens, stats } = useTokens();
   const [clubTab, setClubTab] = useState<'1m' | '5m' | '10m'>('1m');
+  const [heroView, setHeroView] = useState<'ascii' | 'vector'>('ascii');
 
   const handleQuickLaunch = async (name: string, ticker: string) => {
     navigate(`/launch?name=${encodeURIComponent(name)}&ticker=${encodeURIComponent(ticker)}`);
@@ -68,8 +71,39 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           </button>
         </div>
 
-        {/* Hero Monitor Graphic */}
-        <HeroMonitor />
+        {/* View Switcher: ASCII Animation vs Vector Monitor */}
+        <div className="mx-auto mt-9 flex w-fit items-center gap-1 rounded-full border border-[#00C805]/30 bg-[#070b09]/80 p-1 font-mono text-xs shadow-sm">
+          <button
+            onClick={() => setHeroView('ascii')}
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs transition cursor-pointer ${
+              heroView === 'ascii'
+                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_12px_rgba(0,200,5,0.4)]'
+                : 'text-[rgb(var(--muted))] hover:text-white'
+            }`}
+          >
+            <Terminal className="h-3.5 w-3.5" />
+            ASCII 3D Terminal
+          </button>
+          <button
+            onClick={() => setHeroView('vector')}
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs transition cursor-pointer ${
+              heroView === 'vector'
+                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_12px_rgba(0,200,5,0.4)]'
+                : 'text-[rgb(var(--muted))] hover:text-white'
+            }`}
+          >
+            <BarChart2 className="h-3.5 w-3.5" />
+            Vector Monitor
+          </button>
+        </div>
+
+        {heroView === 'ascii' ? (
+          <div className="mx-auto mt-4 max-w-[860px]">
+            <AsciiArtAnimation initialMode="donut" />
+          </div>
+        ) : (
+          <HeroMonitor />
+        )}
 
         {/* Feature Chips */}
         <div className="mx-auto mt-6 flex max-w-3xl flex-wrap justify-center gap-2">
@@ -88,8 +122,13 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
         </div>
       </section>
 
+      {/* Realtime ASCII Ticker */}
+      <div className="mt-10 rounded-xl overflow-hidden shadow-sm">
+        <AsciiTicker />
+      </div>
+
       {/* 4 Stats Cards */}
-      <section className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <section className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="panel flex items-center gap-3 p-4">
           <span className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[rgb(var(--line))] text-[rgb(var(--ink))] sm:flex">
             <Rocket className="h-5 w-5" />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Menu, X, Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle } from 'lucide-react';
+import { Menu, X, Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle, Terminal } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
+import { useTheme } from '../context/ThemeContext';
 import { BrandLogo } from './BrandLogo';
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { connected, publicKey, balanceUsd, openWalletModal } = useWallet();
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
@@ -46,7 +48,14 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
           </span>
         </button>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className="rounded-full border border-[#00C805]/30 bg-[#00C805]/10 px-2 py-1 font-mono text-[10px] font-bold text-[#00C805]"
+            title="Toggle theme"
+          >
+            {theme === 'terminal' ? '⚡ ASCII' : '📜 PAPER'}
+          </button>
           {connected && publicKey ? (
             <div className="flex items-center gap-2 rounded-full border border-[rgb(var(--line))] bg-[rgb(var(--card))] px-3 py-1 font-mono text-xs">
               <span className="font-semibold">{publicKey}</span>

@@ -2,6 +2,27 @@
 
 @layer base {
   :root {
+    --paper: 8 13 10;     /* #080D0A cyber slate */
+    --card: 14 20 16;     /* #0E1410 dark terminal panel */
+    --raised: 20 30 24;   /* #141E18 */
+    --ink: 232 245 236;   /* #E8F5EC neon off-white */
+    --muted: 120 155 130; /* #789B82 soft phosphor */
+    --line: 28 44 34;     /* #1C2C22 border line */
+    --accent: 0 200 5;    /* #00C805 Robinhood emerald */
+    --accent-ink: 0 0 0;
+    --strong: 0 200 5;
+    --strong-ink: 0 0 0;
+    --pill: 0 200 5;
+    --up: 0 230 0;
+    --down: 255 70 70;
+    --warn: 255 180 0;
+    --as-grid: rgba(0, 200, 5, 0.08);
+    --as-ghost: rgba(0, 200, 5, 0.3);
+    color-scheme: dark;
+  }
+
+  html.theme-paper,
+  .theme-paper {
     --paper: 247 246 242; /* #F7F6F2 */
     --card: 255 255 253;  /* #FFFFFD */
     --raised: 240 239 233;/* #F0EFE9 */
@@ -21,11 +42,52 @@
     color-scheme: light;
   }
 
+  html.theme-terminal,
+  .theme-terminal {
+    --paper: 8 13 10;     /* #080D0A cyber slate */
+    --card: 14 20 16;     /* #0E1410 dark terminal panel */
+    --raised: 20 30 24;   /* #141E18 */
+    --ink: 232 245 236;   /* #E8F5EC neon off-white */
+    --muted: 120 155 130; /* #789B82 soft phosphor */
+    --line: 28 44 34;     /* #1C2C22 border line */
+    --accent: 0 200 5;    /* #00C805 Robinhood emerald */
+    --accent-ink: 0 0 0;
+    --strong: 0 200 5;
+    --strong-ink: 0 0 0;
+    --pill: 0 200 5;
+    --up: 0 230 0;
+    --down: 255 70 70;
+    --warn: 255 180 0;
+    --as-grid: rgba(0, 200, 5, 0.08);
+    --as-ghost: rgba(0, 200, 5, 0.3);
+    color-scheme: dark;
+  }
+
   body {
     background-color: rgb(var(--paper));
     color: rgb(var(--ink));
     font-family: 'Space Grotesk', system-ui, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
+}
+
+.text-shadow-glow {
+  text-shadow: 0 0 8px rgba(0, 255, 102, 0.6), 0 0 16px rgba(0, 200, 5, 0.3);
+}
+
+.box-ascii {
+  border: 1px solid rgba(0, 200, 5, 0.35);
+  box-shadow: 0 0 15px rgba(0, 200, 5, 0.07);
+}
+
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
 }
 
 .font-pixel {
@@ -232,4 +294,13 @@
 
 .blink {
   animation: blink 1s infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
 }

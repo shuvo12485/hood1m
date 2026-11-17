@@ -1,6 +1,7 @@
 import React from 'react';
-import { Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle } from 'lucide-react';
+import { Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle, Terminal } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
+import { useTheme } from '../context/ThemeContext';
 import { BrandLogo } from './BrandLogo';
 
 interface SidebarProps {
@@ -12,6 +13,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQuery, setSearchQuery }) => {
   const { connected, publicKey, balanceEth, balanceUsd, openWalletModal, disconnect } = useWallet();
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
@@ -109,6 +111,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQ
 
         {/* Wallet Connection / Buying Power */}
         <div className="mt-auto flex flex-col gap-3">
+          {/* Theme Mode Toggle (ASCII Terminal / Paper Retro) */}
+          <div className="rounded-xl border border-[rgb(var(--line))] bg-[rgb(var(--raised))]/40 p-2.5 text-xs font-mono">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-wider text-[rgb(var(--muted))] flex items-center gap-1">
+                <Terminal className="h-3 w-3 text-[#00C805]" />
+                Theme
+              </span>
+              <button
+                onClick={toggleTheme}
+                className="rounded border border-[#00C805]/30 bg-[#00C805]/10 px-2 py-0.5 text-[10px] font-bold text-[#00C805] hover:bg-[#00C805]/20 cursor-pointer transition"
+              >
+                {theme === 'terminal' ? '⚡ ASCII TERMINAL' : '📜 RETRO PAPER'}
+              </button>
+            </div>
+          </div>
+
           {connected && publicKey ? (
             <div className="rounded-xl border border-[rgb(var(--line))] bg-[rgb(var(--raised))]/60 p-3">
               <div className="text-[10px] font-mono uppercase tracking-wider text-[rgb(var(--muted))]">

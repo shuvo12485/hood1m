@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { WalletProvider } from './context/WalletContext';
 import { TokensProvider } from './context/TokensContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -121,10 +122,12 @@ export function AppContent() {
 
 export default function App() {
   return (
-    <WalletProvider>
-      <TokensProvider>
-        <AppContent />
-      </TokensProvider>
-    </WalletProvider>
+    <ThemeProvider>
+      <WalletProvider>
+        <TokensProvider>
+          <AppContent />
+        </TokensProvider>
+      </WalletProvider>
+    </ThemeProvider>
   );
 }
