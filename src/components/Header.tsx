@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle, Terminal } from 'lucide-react';
+import { Menu, X, Home, Rocket, Compass, Trophy, Crown, LayoutDashboard, BarChart3, HelpCircle } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
-import { useTheme } from '../context/ThemeContext';
 import { BrandLogo } from './BrandLogo';
 
 interface HeaderProps {
@@ -12,7 +11,6 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { connected, publicKey, balanceUsd, openWalletModal } = useWallet();
-  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
@@ -27,10 +25,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-white/10 bg-[#0B0F17]/95 px-4 backdrop-blur-xl lg:hidden shadow-lg">
+      <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-[rgb(var(--line))] bg-[rgb(var(--card))]/95 px-4 backdrop-blur-md lg:hidden">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 text-white transition hover:border-[#00C805]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgb(var(--line))] text-[rgb(var(--ink))] transition hover:border-[rgb(var(--ink))]"
           aria-label="Open menu"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -38,24 +36,17 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 font-display text-lg font-bold"
+          className="flex items-center gap-2 font-pixel text-lg font-bold"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black border border-[#00C805]/40 shadow-[0_0_12px_rgba(0,200,5,0.3)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black border border-white/10 shadow-sm">
             <BrandLogo variant="feather-arrow" size={22} />
           </div>
-          <span className="hidden tracking-tight min-[400px]:inline text-white">
+          <span className="hidden tracking-[-0.03em] min-[400px]:inline text-[rgb(var(--ink))]">
             Hood<span className="text-[#00C805]">1M</span>
           </span>
         </button>
 
-        <div className="ml-auto flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="rounded-full border border-[#00C805]/30 bg-[#00C805]/10 px-2 py-1 font-mono text-[10px] font-bold text-[#00C805]"
-            title="Toggle theme"
-          >
-            {theme === 'fintech-dark' ? '💎 DARK' : theme === 'terminal' ? '⚡ ASCII' : '📜 PAPER'}
-          </button>
+        <div className="ml-auto">
           {connected && publicKey ? (
             <div className="flex items-center gap-2 rounded-full border border-[rgb(var(--line))] bg-[rgb(var(--card))] px-3 py-1 font-mono text-xs">
               <span className="font-semibold">{publicKey}</span>

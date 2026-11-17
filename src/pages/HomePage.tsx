@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { HeroMonitor } from '../components/HeroMonitor';
-import { HeroInteractivePortal } from '../components/HeroInteractivePortal';
-import { AsciiArtAnimation } from '../components/AsciiArtAnimation';
-import { AsciiTicker } from '../components/AsciiTicker';
 import { CoinCard } from '../components/CoinCard';
 import { TopPerformersTable } from '../components/TopPerformersTable';
 import { QuickLaunchCard } from '../components/QuickLaunchCard';
 import { useTokens } from '../context/TokensContext';
-import { Rocket, BarChart2, DollarSign, Award, Terminal, Zap, Sparkles } from 'lucide-react';
+import { Rocket, BarChart2, DollarSign, Award } from 'lucide-react';
 
 interface HomePageProps {
   navigate: (path: string) => void;
@@ -16,7 +13,6 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const { tokens, stats } = useTokens();
   const [clubTab, setClubTab] = useState<'1m' | '5m' | '10m'>('1m');
-  const [heroView, setHeroView] = useState<'portal' | 'vector' | 'ascii'>('vector');
 
   const handleQuickLaunch = async (name: string, ticker: string) => {
     navigate(`/launch?name=${encodeURIComponent(name)}&ticker=${encodeURIComponent(ticker)}`);
@@ -45,83 +41,35 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           Hood1M · Robinhood Web3 · Arbitrum L2 · Uniswap v3
         </div>
 
-        <h1 className="font-display mx-auto mt-6 max-w-4xl text-[46px] min-[420px]:text-[60px] sm:text-[84px] font-black tracking-tight leading-[1.01]">
-          <span className="block text-white">Every coin starts at</span>
-          <span className="block text-[#00C805]">
-            $1,000,000<span className="text-white">.</span>
+        <h1 className="h-display mx-auto mt-4 max-w-3xl text-[40px] min-[420px]:text-[50px] sm:text-[76px] leading-[1.05]">
+          <span className="mx-auto block w-fit">Every coin starts at</span>
+          <span className="mx-auto block w-fit text-[#00C805]">
+            $1,000,000<span className="text-[rgb(var(--ink))]">.</span>
           </span>
         </h1>
 
-        <p className="font-outfit mx-auto mt-6 max-w-lg text-lg text-[#8B95A5] leading-relaxed font-normal">
-          <span className="mx-auto block w-fit">Same $1M starting valuation for everyone.</span>
-          <span className="mx-auto block w-fit">Commission-free trading on Arbitrum L2 · Uniswap v3.</span>
+        <p className="mx-auto mt-6 max-w-md text-lg text-[rgb(var(--muted))] leading-relaxed">
+          <span className="mx-auto block w-fit">Same starting FDV for everyone.</span>
+          <span className="mx-auto block w-fit">Commission-free trading on Robinhood Web3.</span>
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3.5">
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => navigate('/launch')}
-            className="btn-dark px-8 py-3.5 text-base font-bold flex items-center gap-2"
+            className="btn-dark px-7 py-3 text-[15px]"
           >
-            <Sparkles className="h-4 w-4" />
-            Create a Token ($1M Floor) →
+            Create a millionaire →
           </button>
           <button
             onClick={() => navigate('/explore')}
-            className="btn-light px-8 py-3.5 text-base font-semibold"
+            className="btn-light px-7 py-3 text-[15px]"
           >
-            Explore Millionaires
+            Explore coins
           </button>
         </div>
 
-        {/* View Switcher: 3D Hologram vs Vector Monitor vs ASCII */}
-        <div className="mx-auto mt-10 flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-[#0E141F]/80 p-1.5 font-mono text-xs shadow-lg backdrop-blur-md">
-          <button
-            onClick={() => setHeroView('portal')}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition cursor-pointer ${
-              heroView === 'portal'
-                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_15px_rgba(0,200,5,0.5)]'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Zap className="h-3.5 w-3.5" />
-            3D Holographic Core
-          </button>
-          <button
-            onClick={() => setHeroView('vector')}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition cursor-pointer ${
-              heroView === 'vector'
-                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_15px_rgba(0,200,5,0.5)]'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <BarChart2 className="h-3.5 w-3.5" />
-            Chart Monitor
-          </button>
-          <button
-            onClick={() => setHeroView('ascii')}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs transition cursor-pointer ${
-              heroView === 'ascii'
-                ? 'bg-[#00C805] font-bold text-black shadow-[0_0_15px_rgba(0,200,5,0.5)]'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Terminal className="h-3.5 w-3.5" />
-            ASCII Terminal
-          </button>
-        </div>
-
-        {heroView === 'portal' ? (
-          <HeroInteractivePortal
-            navigate={navigate}
-            onQuickLaunch={handleQuickLaunch}
-          />
-        ) : heroView === 'ascii' ? (
-          <div className="mx-auto mt-6 max-w-[860px]">
-            <AsciiArtAnimation initialMode="donut" />
-          </div>
-        ) : (
-          <HeroMonitor />
-        )}
+        {/* Hero Monitor Graphic */}
+        <HeroMonitor />
 
         {/* Feature Chips */}
         <div className="mx-auto mt-6 flex max-w-3xl flex-wrap justify-center gap-2">
@@ -140,13 +88,8 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
         </div>
       </section>
 
-      {/* Realtime ASCII Ticker */}
-      <div className="mt-10 rounded-xl overflow-hidden shadow-sm">
-        <AsciiTicker />
-      </div>
-
       {/* 4 Stats Cards */}
-      <section className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <section className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="panel flex items-center gap-3 p-4">
           <span className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[rgb(var(--line))] text-[rgb(var(--ink))] sm:flex">
             <Rocket className="h-5 w-5" />

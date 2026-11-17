@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { WalletProvider } from './context/WalletContext';
 import { TokensProvider } from './context/TokensContext';
-import { ThemeProvider } from './context/ThemeContext';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { CyberBackground } from './components/CyberBackground';
 import { WalletModal } from './components/WalletModal';
 import { HomePage } from './pages/HomePage';
 import { ExplorePage } from './pages/ExplorePage';
@@ -95,9 +93,7 @@ export function AppContent() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[rgb(var(--paper))] text-[rgb(var(--ink))]">
-      {/* Dynamic Cyber Aurora & Grid Background */}
-      <CyberBackground />
+    <div className="min-h-screen bg-[rgb(var(--paper))] text-[rgb(var(--ink))]">
       {/* Desktop Fixed Left Navigation */}
       <Sidebar
         currentPath={currentPath}
@@ -125,12 +121,10 @@ export function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <WalletProvider>
-        <TokensProvider>
-          <AppContent />
-        </TokensProvider>
-      </WalletProvider>
-    </ThemeProvider>
+    <WalletProvider>
+      <TokensProvider>
+        <AppContent />
+      </TokensProvider>
+    </WalletProvider>
   );
 }
