@@ -84,7 +84,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ navigate, searchQuery,
         <div>
           <h1 className="h-display text-4xl font-bold">Explore</h1>
           <p className="font-mono text-xs text-[rgb(var(--muted))] mt-1">
-            Browse all verified coins launched on Arbitrum Sepolia
+            Browse all verified coins launched on Arbitrum One Mainnet
           </p>
         </div>
 
@@ -142,7 +142,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ navigate, searchQuery,
         {sortedTokens.length === 0 ? (
           <div className="panel p-12 text-center font-mono">
             <p className="font-pixel text-xl font-bold text-[rgb(var(--ink))]">
-              {searchQuery ? `No coins found matching "${searchQuery}"` : 'No coins launched yet on Arbitrum Sepolia'}
+              {searchQuery ? `No coins found matching "${searchQuery}"` : 'No coins launched yet on Arbitrum One'}
             </p>
             <p className="mt-2 text-xs text-[rgb(var(--muted))]">
               Every coin starts at $1,000,000 FDV. Be the first to deploy!

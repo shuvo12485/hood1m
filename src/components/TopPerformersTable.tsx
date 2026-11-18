@@ -23,7 +23,7 @@ export const TopPerformersTable: React.FC<TopPerformersTableProps> = ({ tokens, 
   if (tokens.length === 0) {
     return (
       <div className="panel p-8 mt-12 text-center font-mono text-xs text-[rgb(var(--muted))]">
-        <p className="font-pixel text-base font-bold text-[rgb(var(--ink))]">No tokens launched yet on Arbitrum Sepolia</p>
+        <p className="font-pixel text-base font-bold text-[rgb(var(--ink))]">No tokens launched yet on Arbitrum One</p>
         <p className="mt-1">Be the pioneer to launch a token at $1,000,000 FDV floor!</p>
       </div>
     );
@@ -123,7 +123,7 @@ export const TopPerformersTable: React.FC<TopPerformersTableProps> = ({ tokens, 
                   <td className="px-3 py-3">
                     {t.graduated ? (
                       <span className="rounded-full bg-[rgb(var(--strong))] px-2 py-0.5 font-mono text-[10px] font-bold text-[rgb(var(--strong-ink))]">
-                        UNISWAP v3
+                        UNISWAP v4
                       </span>
                     ) : (
                       <span className="rounded-full border border-[#00C805] bg-[#00C805]/10 px-2 py-0.5 font-mono text-[10px] font-bold text-[#00C805]">

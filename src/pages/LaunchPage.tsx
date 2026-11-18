@@ -27,7 +27,7 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
   const [launchError, setLaunchError] = useState<string | null>(null);
   const [launchStage, setLaunchStage] = useState<string>('');
 
-  const rentEth = 0.003; // Estimated Arbitrum Sepolia gas for contract deployment
+  const rentEth = 0.0008; // Estimated Arbitrum One gas for contract deployment
   const buyAmount = parseFloat(initialBuyEth) || 0;
   const totalEthRequired = rentEth + buyAmount;
 
@@ -55,12 +55,12 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
     }
 
     if (balanceEth < totalEthRequired) {
-      setLaunchError(`Insufficient balance. You have ${balanceEth.toFixed(4)} ETH but need ~${totalEthRequired.toFixed(4)} ETH on Arbitrum Sepolia.`);
+      setLaunchError(`Insufficient balance. You have ${balanceEth.toFixed(4)} ETH but need ~${totalEthRequired.toFixed(4)} ETH on Arbitrum One.`);
       return;
     }
 
     setIsSubmitting(true);
-    setLaunchStage('Deploying smart contracts to Arbitrum Sepolia. Please confirm in your wallet...');
+    setLaunchStage('Deploying smart contracts to Arbitrum One Mainnet. Please confirm in your wallet...');
 
     try {
       const res = await createToken({
@@ -79,7 +79,7 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
       navigate(`/token/${res.token.mint}`);
     } catch (err: any) {
       console.error(err);
-      setLaunchError(err?.message || 'Transaction was rejected or failed on Arbitrum Sepolia.');
+      setLaunchError(err?.message || 'Transaction was rejected or failed on Arbitrum One Mainnet.');
     } finally {
       setIsSubmitting(false);
       setLaunchStage('');
@@ -92,7 +92,7 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
         <div className="border-b border-[rgb(var(--line))] pb-6">
           <div className="flex items-center gap-2 rounded-full border border-[rgb(var(--line))] bg-[rgb(var(--card))] px-3 py-1 font-mono text-[10.5px] uppercase tracking-[0.14em] text-[rgb(var(--muted))] w-fit">
             <span className="h-1.5 w-1.5 rounded-full bg-[#00C805] animate-pulse"></span>
-            Hood1M · Arbitrum L2 ERC-20
+            Hood1M · Arbitrum One Mainnet · Uniswap v4
           </div>
           <h1 className="h-display text-4xl font-bold mt-3">Launch on Hood1M</h1>
           <p className="font-mono text-xs text-[rgb(var(--muted))] mt-1">
@@ -296,17 +296,17 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
                 <div className="text-base font-bold mt-1">$0.00100</div>
               </div>
               <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <div className="text-[rgb(var(--muted))]">UNISWAP v3 TARGET</div>
+                <div className="text-[rgb(var(--muted))]">UNISWAP v4 TARGET</div>
                 <div className="text-base font-bold mt-1">35 ETH (~$108.5K)</div>
               </div>
             </div>
 
             <div className="border-t border-white/10 pt-4 flex flex-wrap items-center justify-between text-xs font-mono">
               <div className="text-[rgb(var(--muted))]">
-                Arbitrum Gas & Contract Deployment: <span className="text-white font-bold">~{rentEth} ETH</span>
+                Arbitrum One Gas & Contract Deployment: <span className="text-white font-bold">~{rentEth} ETH</span>
               </div>
               <div className="text-white font-bold">
-                Total Required: <span className="text-[#00C805]">{totalEthRequired.toFixed(3)} ETH (~${(totalEthRequired * ETH_PRICE_USD).toFixed(0)})</span>
+                Total Required: <span className="text-[#00C805]">{totalEthRequired.toFixed(4)} ETH (~${(totalEthRequired * ETH_PRICE_USD).toFixed(0)})</span>
               </div>
             </div>
           </div>
@@ -325,14 +325,14 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
               <p>{launchError}</p>
               {launchError.toLowerCase().includes('insufficient') && (
                 <div className="pt-2 border-t border-[rgb(var(--down))]/30 flex items-center justify-between">
-                  <span>Need free testnet funds?</span>
+                  <span>Need to bridge ETH to Arbitrum?</span>
                   <a
-                    href="https://faucets.chain.link/arbitrum-sepolia"
+                    href="https://bridge.arbitrum.io/"
                     target="_blank"
                     rel="noreferrer"
                     className="underline font-bold text-[rgb(var(--down))] hover:opacity-80"
                   >
-                    Claim Arbitrum Sepolia ETH ↗
+                    Official Arbitrum Bridge ↗
                   </a>
                 </div>
               )}
@@ -360,12 +360,12 @@ export const LaunchPage: React.FC<LaunchPageProps> = ({ navigate, initialName = 
                     <Rocket className="h-5 w-5 animate-spin" /> Confirming in Wallet…
                   </span>
                 ) : (
-                  <span>Launch on Arbitrum Sepolia →</span>
+                  <span>Launch on Arbitrum One Mainnet →</span>
                 )}
               </button>
             )}
             <p className="text-center font-mono text-[11px] text-[rgb(var(--muted))] mt-3">
-              Your token will be deployed as a verified ERC-20 on Arbitrum Sepolia with zero upfront liquidity and live bonding curve trading.
+              Your token will be deployed as a verified ERC-20 on Arbitrum One Mainnet with zero upfront liquidity and automated Uniswap v4 graduation.
             </p>
           </div>
         </form>

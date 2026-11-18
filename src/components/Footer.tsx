@@ -44,7 +44,7 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
 
         {/* Note */}
         <div className="max-w-sm font-mono text-[11px] text-[rgb(var(--muted))] md:ml-auto md:text-right">
-          $1M is a configured starting FDV, not money in the pool. Powered by Hood1M · Arbitrum L2 · Uniswap v3.
+          $1M is a configured starting FDV, not money in the pool. Powered by Hood1M · Arbitrum One Mainnet · Uniswap v4.
         </div>
       </div>
     </footer>

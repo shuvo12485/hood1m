@@ -15,6 +15,7 @@ import {
   INITIAL_SUPPLY,
 } from '../utils/bondingCurve';
 import { CURVE_ABI, CURVE_BYTECODE, TOKEN_ABI, TOKEN_BYTECODE } from '../contracts/artifacts';
+import { CHAIN_CONFIG, UNISWAP_V4, getExplorerTxUrl } from '../contracts/config';
 import { useWallet } from './WalletContext';
 
 interface TokensContextType {
@@ -58,7 +59,15 @@ interface TokensContextType {
 const TokensContext = createContext<TokensContextType | undefined>(undefined);
 
 export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { getSigner, fullAddress, connected, isArbitrumSepolia, switchToArbitrumSepolia, refreshBalance } = useWallet();
+  const {
+    getSigner,
+    fullAddress,
+    connected,
+    isArbitrumMainnet,
+    isArbitrumSupported,
+    switchToArbitrumOne,
+    refreshBalance,
+  } = useWallet();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [trades, setTrades] = useState<Trade[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -137,12 +146,12 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   /**
-   * Query real on-chain token balance from Arbitrum Sepolia
+   * Query real on-chain token balance from Arbitrum One Mainnet
    */
   const getUserTokenBalance = async (mint: string): Promise<number> => {
     if (!fullAddress || !mint) return 0;
     try {
-      const provider = new JsonRpcProvider('https://sepolia-rollup.arbitrum.io/rpc');
+      const provider = new JsonRpcProvider(CHAIN_CONFIG.rpcUrls[0]);
       const tokenContract = new Contract(mint, TOKEN_ABI, provider);
       const balWei = await tokenContract.balanceOf(fullAddress);
       return parseFloat(formatEther(balWei));
@@ -153,11 +162,11 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   /**
-   * Query real on-chain holder distribution from Arbitrum Sepolia
+   * Query real on-chain holder distribution from Arbitrum One Mainnet
    */
   const getTokenHolders = async (mint: string, curveAddress: string, creator: string) => {
     try {
-      const provider = new JsonRpcProvider('https://sepolia-rollup.arbitrum.io/rpc');
+      const provider = new JsonRpcProvider(CHAIN_CONFIG.rpcUrls[0]);
       const tokenContract = new Contract(mint, TOKEN_ABI, provider);
       const [curveBalWei, creatorBalWei, userBalWei] = await Promise.all([
         curveAddress ? tokenContract.balanceOf(curveAddress).catch(() => BigInt(0)) : Promise.resolve(BigInt(0)),
@@ -175,7 +184,7 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   /**
-   * Real on-chain token launch on Arbitrum Sepolia.
+   * Real on-chain token launch on Arbitrum One Mainnet (target Uniswap v4 graduation).
    * Prompts user wallet to deploy Hood1MBondingCurve & Hood1MToken.
    * Throws if rejected or gas insufficient — NEVER fakes addresses.
    */
@@ -191,19 +200,19 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     website?: string;
   }): Promise<{ token: Token; txHash: string }> => {
     if (!connected || !fullAddress) {
-      throw new Error('Please connect your MetaMask or Phantom wallet to deploy.');
+      throw new Error('Please connect your Robinhood, MetaMask, or Phantom wallet to deploy.');
     }
 
-    if (!isArbitrumSepolia) {
-      const switched = await switchToArbitrumSepolia();
+    if (!isArbitrumSupported) {
+      const switched = await switchToArbitrumOne();
       if (!switched) {
-        throw new Error('Please switch your wallet network to Arbitrum Sepolia Testnet (Chain ID: 421614).');
+        throw new Error('Please switch your wallet network to Arbitrum One Mainnet (Chain ID: 42161).');
       }
     }
 
     const signer = await getSigner();
     if (!signer) {
-      throw new Error('Unable to access wallet signer. Please unlock MetaMask.');
+      throw new Error('Unable to access wallet signer. Please unlock your wallet.');
     }
 
     let mintAddress = '';
@@ -211,14 +220,14 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     let txHash = '';
 
     try {
-      console.log('1/3 Deploying Hood1M Bonding Curve on Arbitrum Sepolia...');
+      console.log('1/3 Deploying Hood1M Bonding Curve on Arbitrum One (Uniswap v4 target)...');
       const curveFactory = new ContractFactory(CURVE_ABI, CURVE_BYTECODE, signer);
       const curveContract = await curveFactory.deploy(fullAddress);
       await curveContract.waitForDeployment();
       curveAddress = await curveContract.getAddress();
       console.log('Curve deployed at:', curveAddress);
 
-      console.log('2/3 Deploying Hood1M ERC-20 Token on Arbitrum Sepolia...');
+      console.log('2/3 Deploying Hood1M ERC-20 Token on Arbitrum One...');
       const tokenFactory = new ContractFactory(TOKEN_ABI, TOKEN_BYTECODE, signer);
       const tokenContract = await tokenFactory.deploy(
         data.name,
@@ -234,7 +243,7 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       txHash = deployTx?.hash || '';
       console.log('Token deployed at:', mintAddress, 'txHash:', txHash);
 
-      console.log('3/3 Configuring bonding curve...');
+      console.log('3/3 Configuring bonding curve with Uniswap v4 Singleton...');
       const curveWithSigner = new Contract(curveAddress, CURVE_ABI, signer);
       const setTokenTx = await curveWithSigner.setToken(mintAddress);
       await setTokenTx.wait();
@@ -253,9 +262,9 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         throw new Error('Transaction was rejected in your wallet.');
       }
       if (err.message?.includes('insufficient funds') || err.code === 'INSUFFICIENT_FUNDS') {
-        throw new Error('Insufficient Arbitrum Sepolia ETH for gas. Please claim free ETH from the testnet faucet.');
+        throw new Error('Insufficient ETH on Arbitrum One for gas. Please bridge or fund your wallet with real ETH.');
       }
-      throw new Error(err.shortMessage || err.message || 'On-chain deployment failed on Arbitrum Sepolia.');
+      throw new Error(err.shortMessage || err.message || 'On-chain deployment failed on Arbitrum One Mainnet.');
     }
 
     // Save real on-chain token to server
@@ -304,7 +313,7 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   /**
-   * Real on-chain trade execution on Arbitrum Sepolia.
+   * Real on-chain trade execution on Arbitrum One Mainnet.
    * Buys/sells directly against the real smart contract with real transaction receipt.
    * Throws if rejected or failed — NEVER fakes tx hashes.
    */
@@ -325,16 +334,16 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return { success: false, message: 'Please connect your wallet first.' };
     }
 
-    if (!isArbitrumSepolia) {
-      const switched = await switchToArbitrumSepolia();
+    if (!isArbitrumSupported) {
+      const switched = await switchToArbitrumOne();
       if (!switched) {
-        return { success: false, message: 'Please switch your wallet to Arbitrum Sepolia Testnet (421614).' };
+        return { success: false, message: 'Please switch your wallet to Arbitrum One Mainnet (42161).' };
       }
     }
 
     const signer = await getSigner();
     if (!signer) {
-      return { success: false, message: 'Wallet signer not found. Please unlock MetaMask.' };
+      return { success: false, message: 'Wallet signer not found. Please unlock your wallet.' };
     }
 
     const target = tokens.find(t => t.mint.toLowerCase() === mint.toLowerCase());
@@ -352,7 +361,7 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const tx = await curveContract.buy(0, { value: valueWei });
         const receipt = await tx.wait();
         txHash = receipt.hash;
-        console.log('Real buy transaction mined on Arbitrum Sepolia:', txHash);
+        console.log('Real buy transaction mined on Arbitrum One:', txHash);
       } else {
         console.log(`Executing real on-chain sell: ${tokenAmount} tokens`);
         const tokenContract = new Contract(target.mint, TOKEN_ABI, signer);
@@ -378,7 +387,7 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const tx = await curveContract.sell(tokenAmountWei, 0);
         const receipt = await tx.wait();
         txHash = receipt.hash;
-        console.log('Real sell transaction mined on Arbitrum Sepolia:', txHash);
+        console.log('Real sell transaction mined on Arbitrum One:', txHash);
       }
     } catch (err: any) {
       console.error('On-chain trade failed:', err);
@@ -386,11 +395,11 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return { success: false, message: 'Transaction rejected in wallet.' };
       }
       if (err.message?.includes('insufficient funds') || err.code === 'INSUFFICIENT_FUNDS') {
-        return { success: false, message: 'Insufficient ETH for transaction + gas. Get free testnet ETH from the faucet.' };
+        return { success: false, message: 'Insufficient ETH for transaction + Arbitrum L2 gas.' };
       }
       return {
         success: false,
-        message: err.shortMessage || err.message || 'On-chain trade failed on Arbitrum Sepolia.',
+        message: err.shortMessage || err.message || 'On-chain trade failed on Arbitrum One.',
       };
     }
 
@@ -435,7 +444,7 @@ export const TokensProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     return {
       success: true,
-      message: `Order filled on Arbitrum Sepolia!`,
+      message: `Order filled on Arbitrum One Mainnet!`,
       txHash,
       tokensDiff,
       ethDiff,

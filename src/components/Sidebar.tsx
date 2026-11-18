@@ -17,8 +17,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQ
     publicKey,
     balanceEth,
     balanceUsd,
-    isArbitrumSepolia,
-    switchToArbitrumSepolia,
+    isArbitrumMainnet,
+    isArbitrumSupported,
+    switchToArbitrumOne,
     openWalletModal,
     disconnect,
   } = useWallet();
@@ -113,29 +114,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, navigate, searchQ
             ></path>
           </svg>
           <div className="mt-1 flex justify-between font-mono text-[10px] text-[rgb(var(--muted))]">
-            <span>Arbitrum Sepolia</span>
+            <span>Arbitrum One</span>
             <span className="font-semibold text-[rgb(var(--ink))]">ETH: ${ethPriceUsd.toFixed(0)}</span>
           </div>
         </div>
 
-        {/* Network & Faucet Tools */}
+        {/* Network & Bridge Tools */}
         <div className="space-y-2">
-          {connected && !isArbitrumSepolia && (
+          {connected && !isArbitrumMainnet && (
             <button
-              onClick={() => switchToArbitrumSepolia()}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 font-mono text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition"
+              onClick={() => switchToArbitrumOne()}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition"
             >
-              <ArrowRightLeft className="h-3.5 w-3.5" /> Switch to Arbitrum Sepolia
+              <ArrowRightLeft className="h-3.5 w-3.5" /> Switch to Arbitrum One
             </button>
           )}
 
           <a
-            href="https://faucets.chain.link/arbitrum-sepolia"
+            href="https://bridge.arbitrum.io/"
             target="_blank"
             rel="noreferrer"
             className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[rgb(var(--line))] bg-[rgb(var(--raised))]/40 px-3 py-1.5 font-mono text-[11px] font-semibold text-[rgb(var(--ink))] hover:border-[#00C805] hover:text-[#00C805] transition"
           >
-            <Droplet className="h-3.5 w-3.5 text-[#00C805]" /> Get Free Testnet ETH ↗
+            <Droplet className="h-3.5 w-3.5 text-[#00C805]" /> Official Arbitrum Bridge ↗
           </a>
         </div>
 

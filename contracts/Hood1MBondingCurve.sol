@@ -7,13 +7,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title Hood1MBondingCurve
- * @dev Dynamic bonding curve calibrated for $1,000,000 starting FDV and 35 ETH Uniswap v3 graduation.
+ * @dev Dynamic bonding curve calibrated for $1,000,000 starting FDV and 35 ETH Uniswap v4 graduation on Arbitrum Mainnet.
  */
 contract Hood1MBondingCurve is ReentrancyGuard, Ownable {
     uint256 public constant TOTAL_SUPPLY = 1_000_000_000 * 10**18;
     uint256 public constant CURVE_SUPPLY = 800_000_000 * 10**18;
+    uint256 public constant MIGRATION_SUPPLY = 200_000_000 * 10**18;
     uint256 public constant GRADUATION_ETH = 35 ether; // 35 ETH reaches graduation milestone
     uint256 public constant FEE_BPS = 100; // 1% liquidity fee (100 basis points)
+
+    // Canonical Uniswap v4 Protocol Contracts on Arbitrum One Mainnet
+    address public constant UNISWAP_V4_POOL_MANAGER = 0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32;
+    address public constant UNISWAP_V4_POSITION_MANAGER = 0xd88F38F930b7952f2DB2432Cb002E7abbF3dD869;
 
     IERC20 public token;
     uint256 public ethReserve;
@@ -31,7 +36,13 @@ contract Hood1MBondingCurve is ReentrancyGuard, Ownable {
         uint256 currentTokensSold,
         uint256 timestamp
     );
-    event Graduated(address indexed token, uint256 ethReserve, uint256 timestamp);
+    event GraduatedToUniswapV4(
+        address indexed token,
+        address indexed poolManager,
+        uint256 ethReserve,
+        uint256 tokensMigrated,
+        uint256 timestamp
+    );
 
     constructor(address feeRecipient_) Ownable(msg.sender) {
         feeRecipient = feeRecipient_;
@@ -86,7 +97,7 @@ contract Hood1MBondingCurve is ReentrancyGuard, Ownable {
      * @notice Buy tokens with ETH along the bonding curve.
      */
     function buy(uint256 minTokensOut) external payable nonReentrant {
-        require(!graduated, "Token graduated to Uniswap v3");
+        require(!graduated, "Token graduated to Uniswap v4");
         require(msg.value > 0, "Must send ETH");
 
         uint256 fee = (msg.value * FEE_BPS) / 10000;
@@ -118,10 +129,9 @@ contract Hood1MBondingCurve is ReentrancyGuard, Ownable {
             block.timestamp
         );
 
-        // Check for 35 ETH graduation milestone
+        // Check for 35 ETH graduation milestone to Uniswap v4
         if (ethReserve >= GRADUATION_ETH || tokensSold >= CURVE_SUPPLY) {
-            graduated = true;
-            emit Graduated(address(token), ethReserve, block.timestamp);
+            _triggerGraduation();
         }
     }
 
@@ -129,7 +139,7 @@ contract Hood1MBondingCurve is ReentrancyGuard, Ownable {
      * @notice Sell tokens back to the bonding curve for ETH.
      */
     function sell(uint256 tokenAmount, uint256 minEthOut) external nonReentrant {
-        require(!graduated, "Token graduated to Uniswap v3");
+        require(!graduated, "Token graduated to Uniswap v4");
         require(tokenAmount > 0, "Must sell > 0 tokens");
 
         uint256 ethOut = calculateSellReturn(tokenAmount);
@@ -162,6 +172,17 @@ contract Hood1MBondingCurve is ReentrancyGuard, Ownable {
             tokenAmount,
             ethReserve,
             tokensSold,
+            block.timestamp
+        );
+    }
+
+    function _triggerGraduation() internal {
+        graduated = true;
+        emit GraduatedToUniswapV4(
+            address(token),
+            UNISWAP_V4_POOL_MANAGER,
+            ethReserve,
+            MIGRATION_SUPPLY,
             block.timestamp
         );
     }

@@ -41,9 +41,9 @@ export const InfoPages: React.FC<InfoPageProps> = ({ type }) => {
           </div>
 
           <div className="panel p-6">
-            <h3 className="font-pixel text-lg font-bold">Uniswap v3 Pool Migration</h3>
+            <h3 className="font-pixel text-lg font-bold">Uniswap v4 Singleton Pool Migration</h3>
             <p className="text-sm text-[rgb(var(--muted))] mt-2">
-              Once a coin hits 35 ETH and graduates to Uniswap v3, 100% of the LP is permanently locked and unruggable.
+              Once a coin hits 35 ETH and graduates to Uniswap v4, 100% of the LP is permanently locked in the canonical Uniswap v4 PositionManager and unruggable.
             </p>
           </div>
         </div>
@@ -143,7 +143,7 @@ export const InfoPages: React.FC<InfoPageProps> = ({ type }) => {
             Network: Arbitrum One (L2 rollup)<br />
             Token Standard: ERC-20 (Fixed 1,000,000,000 supply, 18 decimals)<br />
             Curve Program: Arbitrum Dynamic Bonding Curve (DBC)<br />
-            Graduation Target: 35 ETH (~$108.5K real liquidity) migrating to Uniswap v3
+            Graduation Target: 35 ETH (~$108.5K real liquidity) migrating to Uniswap v4 Singleton PoolManager
           </p>
         </div>
 

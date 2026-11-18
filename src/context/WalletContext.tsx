@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { BrowserProvider, JsonRpcSigner, formatEther } from 'ethers';
-import { ARBITRUM_SEPOLIA_CHAIN_HEX, ARBITRUM_SEPOLIA_CHAIN_ID, CHAIN_CONFIG } from '../contracts/config';
+import {
+  ARBITRUM_ONE_CHAIN_HEX,
+  ARBITRUM_ONE_CHAIN_ID,
+  ARBITRUM_SEPOLIA_CHAIN_HEX,
+  ARBITRUM_SEPOLIA_CHAIN_ID,
+  CHAIN_CONFIG,
+} from '../contracts/config';
 
 export interface WalletContextType {
   connected: boolean;
@@ -10,7 +16,9 @@ export interface WalletContextType {
   balanceUsd: number;
   chainId: string | null;
   chainName: string;
+  isArbitrumMainnet: boolean;
   isArbitrumSepolia: boolean;
+  isArbitrumSupported: boolean;
   walletName: string;
   userTokens: Record<string, number>;
   isModalOpen: boolean;
@@ -21,6 +29,7 @@ export interface WalletContextType {
   connectMetaMask: () => Promise<boolean>;
   connectPhantom: () => Promise<boolean>;
   switchChain: (targetChainIdHex: string) => Promise<boolean>;
+  switchToArbitrumOne: () => Promise<boolean>;
   switchToArbitrumSepolia: () => Promise<boolean>;
   getSigner: () => Promise<JsonRpcSigner | null>;
   sendRealTransaction: (params: { to: string; valueEth: number; data?: string }) => Promise<{ success: boolean; txHash?: string; error?: string }>;
@@ -33,10 +42,11 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 // Known chains
 const CHAINS: Record<string, string> = {
+  '0xa4b1': 'Arbitrum One',
+  '42161': 'Arbitrum One',
   '0x66eee': 'Arbitrum Sepolia Testnet',
   '421614': 'Arbitrum Sepolia Testnet',
   '0x1': 'Ethereum Mainnet',
-  '0xa4b1': 'Arbitrum One',
   '0x2105': 'Base',
   '0x89': 'Polygon',
 };
@@ -48,20 +58,13 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [walletName, setWalletName] = useState<string>('MetaMask');
   const [balanceEth, setBalanceEth] = useState<number>(0.0);
   const [chainId, setChainId] = useState<string | null>(null);
-  const [chainName, setChainName] = useState<string>('Arbitrum Sepolia');
+  const [chainName, setChainName] = useState<string>('Arbitrum One');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ethPriceUsd, setEthPriceUsd] = useState<number>(3150);
 
-  const [userTokens, setUserTokens] = useState<Record<string, number>>(() => {
-    try {
-      const saved = localStorage.getItem('hood1m_user_tokens');
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
+  const [userTokens, setUserTokens] = useState<Record<string, number>>({});
 
   // Fetch live ETH price from backend
   useEffect(() => {
@@ -160,9 +163,9 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       await fetchBalance(account, provider);
 
-      // Check if user is already on Arbitrum Sepolia; if not, prompt switch
-      if (chainNormalized !== ARBITRUM_SEPOLIA_CHAIN_HEX && chainNormalized !== '0x66eee') {
-        promptSwitchToArbitrumSepolia(provider);
+      // Prompt switch to Arbitrum One if on an unsupported network
+      if (chainNormalized !== ARBITRUM_ONE_CHAIN_HEX && chainNormalized !== ARBITRUM_SEPOLIA_CHAIN_HEX) {
+        promptSwitchToArbitrumOne(provider);
       }
 
       provider.on('accountsChanged', (newAccounts: string[]) => {
@@ -194,14 +197,13 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const promptSwitchToArbitrumSepolia = async (provider: any) => {
+  const promptSwitchToArbitrumOne = async (provider: any) => {
     try {
       await provider.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ARBITRUM_SEPOLIA_CHAIN_HEX }],
+        params: [{ chainId: ARBITRUM_ONE_CHAIN_HEX }],
       });
     } catch (switchError: any) {
-      // Chain 4902 means network needs to be added
       if (switchError.code === 4902 || switchError.data?.originalError?.code === 4902) {
         try {
           await provider.request({
@@ -209,17 +211,31 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             params: [CHAIN_CONFIG],
           });
         } catch (addError) {
-          console.warn('Failed to add Arbitrum Sepolia chain:', addError);
+          console.warn('Failed to add Arbitrum One chain:', addError);
         }
       }
     }
   };
 
+  const switchToArbitrumOne = async () => {
+    const provider = getActiveProvider();
+    if (!provider) return false;
+    await promptSwitchToArbitrumOne(provider);
+    return true;
+  };
+
   const switchToArbitrumSepolia = async () => {
     const provider = getActiveProvider();
     if (!provider) return false;
-    await promptSwitchToArbitrumSepolia(provider);
-    return true;
+    try {
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ARBITRUM_SEPOLIA_CHAIN_HEX }],
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const switchChain = async (targetChainIdHex: string) => {
@@ -291,14 +307,13 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const updateUserTokens = (mint: string, deltaTokens: number) => {
     setUserTokens(prev => {
       const cur = prev[mint] || 0;
-      const next = Math.max(0, cur + deltaTokens);
-      const updated = { ...prev, [mint]: next };
-      localStorage.setItem('hood1m_user_tokens', JSON.stringify(updated));
-      return updated;
+      return { ...prev, [mint]: Math.max(0, cur + deltaTokens) };
     });
   };
 
+  const isArbitrumMainnet = chainId?.toLowerCase() === ARBITRUM_ONE_CHAIN_HEX || chainId === `${ARBITRUM_ONE_CHAIN_ID}`;
   const isArbitrumSepolia = chainId?.toLowerCase() === ARBITRUM_SEPOLIA_CHAIN_HEX || chainId === `${ARBITRUM_SEPOLIA_CHAIN_ID}`;
+  const isArbitrumSupported = isArbitrumMainnet || isArbitrumSepolia;
 
   return (
     <WalletContext.Provider
@@ -310,7 +325,9 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         balanceUsd: balanceEth * ethPriceUsd,
         chainId,
         chainName,
+        isArbitrumMainnet,
         isArbitrumSepolia,
+        isArbitrumSupported,
         walletName,
         userTokens,
         isModalOpen,
@@ -324,6 +341,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         connectMetaMask: () => connectProvider('metamask', 'MetaMask'),
         connectPhantom: () => connectProvider('phantom', 'Phantom'),
         switchChain,
+        switchToArbitrumOne,
         switchToArbitrumSepolia,
         getSigner,
         sendRealTransaction,

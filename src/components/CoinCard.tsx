@@ -75,7 +75,7 @@ export const CoinCard: React.FC<CoinCardProps> = ({ token, onSelect }) => {
       <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-[rgb(var(--muted))]">
         <span>Vol: {formatUsd(token.volume24h)}</span>
         <span className="text-[rgb(var(--ink))] font-medium">
-          {token.graduated ? '🎓 Uniswap v3' : '⚡ Arbitrum DBC'}
+          {token.graduated ? '🎓 Uniswap v4' : '⚡ Arbitrum DBC'}
         </span>
       </div>
     </div>

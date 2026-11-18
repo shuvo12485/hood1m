@@ -107,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
             <div className="mt-auto border-t border-[rgb(var(--line))] pt-4">
               <div className="font-mono text-xs text-[rgb(var(--muted))] text-center">
-                Arbitrum L2 · Uniswap v3 Liquidity
+                Arbitrum One Mainnet · Uniswap v4 Protocol
               </div>
             </div>
           </div>

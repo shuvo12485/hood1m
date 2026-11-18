@@ -134,7 +134,7 @@ export const HeroMonitor: React.FC = () => {
 
         {/* Footnote & Gain */}
         <text x="108" y="354" fontSize="11" fill="rgb(var(--muted))" className="font-mono">
-          Arbitrum Sepolia DBC bonding curve<tspan className="blink">_</tspan>
+          Arbitrum One Mainnet · Uniswap v4 bonding curve<tspan className="blink">_</tspan>
         </text>
         <text x="700" y="354" fontSize="12" textAnchor="end" fill="rgb(var(--accent))" fontWeight="700" className="font-mono">
           +900.0%

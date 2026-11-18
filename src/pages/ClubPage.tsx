@@ -103,7 +103,7 @@ export const ClubPage: React.FC<ClubPageProps> = ({ navigate }) => {
             <div className="mt-4 border-t border-[rgb(var(--line))] pt-3 flex items-center justify-between font-mono text-xs">
               <span className="text-[rgb(var(--muted))]">Reserve: {t.ethReserve.toFixed(1)} ETH</span>
               <span className="font-bold text-[#00C805]">
-                {t.graduated ? '🏆 Uniswap v3 Pool' : '⚡ On Curve'}
+                {t.graduated ? '🏆 Uniswap v4 Pool' : '⚡ On Curve'}
               </span>
             </div>
           </div>

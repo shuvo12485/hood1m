@@ -87,7 +87,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     app: 'Hood1M',
-    network: 'Arbitrum Sepolia Testnet (421614)',
+    network: 'Arbitrum One Mainnet (42161) · Uniswap v4 Protocol',
+    dex: 'Uniswap v4 Singleton (PoolManager: 0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32)',
     uptime: process.uptime(),
     timestamp: Date.now(),
   });
@@ -101,8 +102,11 @@ app.get('/api/eth-price', async (req, res) => {
 app.get('/api/config', (req, res) => {
   const config = readJsonFile(CONFIG_FILE, {
     factoryAddress: process.env.FACTORY_ADDRESS || '',
-    network: 'Arbitrum Sepolia Testnet',
-    chainId: 421614,
+    network: 'Arbitrum One Mainnet',
+    chainId: 42161,
+    dex: 'Uniswap v4 Protocol',
+    poolManager: '0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32',
+    positionManager: '0xd88F38F930b7952f2DB2432Cb002E7abbF3dD869',
   });
   res.json(config);
 });
@@ -111,8 +115,11 @@ app.post('/api/config', (req, res) => {
   const { factoryAddress } = req.body;
   const config = readJsonFile(CONFIG_FILE, {
     factoryAddress: '',
-    network: 'Arbitrum Sepolia Testnet',
-    chainId: 421614,
+    network: 'Arbitrum One Mainnet',
+    chainId: 42161,
+    dex: 'Uniswap v4 Protocol',
+    poolManager: '0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32',
+    positionManager: '0xd88F38F930b7952f2DB2432Cb002E7abbF3dD869',
   });
   if (factoryAddress && factoryAddress.startsWith('0x')) {
     config.factoryAddress = factoryAddress;
@@ -340,5 +347,5 @@ if (fs.existsSync(DIST_DIR)) {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Hood1M server live on port ${PORT}`);
-  console.log(`Arbitrum Sepolia Testnet enabled (Chain ID: 421614)`);
+  console.log(`Arbitrum One Mainnet enabled (Chain ID: 42161) · Uniswap v4 Protocol`);
 });

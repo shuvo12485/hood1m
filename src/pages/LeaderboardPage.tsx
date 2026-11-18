@@ -31,7 +31,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ navigate }) =>
             <h1 className="h-display text-4xl font-bold">Leaderboard</h1>
           </div>
           <p className="font-mono text-xs text-[rgb(var(--muted))] mt-1">
-            Top performing coins ranked across Arbitrum Sepolia Dynamic Bonding Curves
+            Top performing coins ranked across Arbitrum One Mainnet Dynamic Bonding Curves
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ navigate }) =>
         <div className="panel p-12 mt-8 text-center font-mono">
           <p className="font-pixel text-xl font-bold text-[rgb(var(--ink))]">No ranked coins yet</p>
           <p className="mt-2 text-xs text-[rgb(var(--muted))]">
-            Deploy the first coin on Arbitrum Sepolia to claim the #1 spot!
+            Deploy the first coin on Arbitrum One to claim the #1 spot!
           </p>
           <button
             onClick={() => navigate('/launch')}

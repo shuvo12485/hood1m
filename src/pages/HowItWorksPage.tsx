@@ -36,11 +36,11 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ navigate }) => {
           {/* Step 2 */}
           <section className="panel p-6">
             <h2 className="font-pixel text-xl font-bold text-[rgb(var(--ink))]">
-              2. Dynamic Bonding Curve on Arbitrum L2
+              2. Dynamic Bonding Curve on Arbitrum One Mainnet
             </h2>
             <p className="mt-3 text-sm text-[rgb(var(--muted))] leading-relaxed">
               Trading runs on an audited <strong>Dynamic Bonding Curve (DBC)</strong> smart contract deployed on{' '}
-              <strong>Arbitrum</strong> (the default L2 network powering Robinhood Wallet swaps).
+              <strong>Arbitrum One Mainnet</strong> (the primary native L2 network powering Robinhood Wallet swaps).
               The curve is calibrated so that{' '}
               <strong>approximately 5 ETH of buying moves a coin from $1M to $2M FDV</strong>.
             </p>
@@ -64,12 +64,12 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ navigate }) => {
           {/* Step 4 */}
           <section className="panel p-6">
             <h2 className="font-pixel text-xl font-bold text-[rgb(var(--ink))]">
-              4. Graduation to Uniswap v3 Pool
+              4. Graduation to Uniswap v4 Singleton PoolManager
             </h2>
             <p className="mt-3 text-sm text-[rgb(var(--muted))] leading-relaxed">
-              When <strong>35 ETH</strong> (~$108,500 real liquidity) is deposited into the curve (hitting{' '}
-              <strong>$11.4M FDV</strong>), the protocol automatically migrates all liquidity to a permanent{' '}
-              <strong>Uniswap v3 pool</strong> on Arbitrum. <strong>100% of that LP is permanently locked and unruggable</strong>.
+              When <strong>35 ETH</strong> (~$108,500 real liquidity) is accumulated on the curve (hitting{' '}
+              <strong>$11.4M FDV</strong>), the protocol automatically migrates all liquidity directly into the canonical{' '}
+              <strong>Uniswap v4 PoolManager</strong> (<code className="font-mono text-xs text-[#00C805]">0x360E68faCcca8cA495c1B759Fd9EEe466db9FB32</code>) on Arbitrum One. <strong>100% of that LP position is permanently locked in the PositionManager (0xd88F38F930b7952f2DB2432Cb002E7abbF3dD869) and unruggable</strong>.
               All unsold bonding tokens are sent to a burn address (0x000...dead).
             </p>
           </section>

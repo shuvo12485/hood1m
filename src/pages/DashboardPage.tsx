@@ -64,7 +64,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ navigate }) => {
           <h1 className="h-display text-4xl font-bold">Portfolio</h1>
         </div>
         <p className="font-mono text-xs text-[rgb(var(--muted))] mt-1">
-          Account: {publicKey} ({fullAddress.slice(0, 10)}…) · Network: Arbitrum Sepolia Testnet
+          Account: {publicKey} ({fullAddress.slice(0, 10)}…) · Network: Arbitrum One Mainnet · Uniswap v4
         </p>
       </div>
 

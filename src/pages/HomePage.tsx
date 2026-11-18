@@ -38,7 +38,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
       <section className="relative text-center">
         <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-[rgb(var(--line))] bg-[rgb(var(--card))] px-3.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#00C805] animate-pulse"></span>
-          Hood1M · Robinhood Web3 · Arbitrum L2 · Uniswap v3
+          Hood1M · Robinhood Web3 · Arbitrum One Mainnet · Uniswap v4
         </div>
 
         <h1 className="h-display mx-auto mt-4 max-w-3xl text-[40px] min-[420px]:text-[50px] sm:text-[76px] leading-[1.05]">
@@ -83,7 +83,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             <span className="text-[#00C805]">↗</span> Robinhood Wallet native
           </span>
           <span className="chip px-3 py-1 text-[11px]">
-            <span className="text-[#00C805]">↗</span> Uniswap v3 graduation
+            <span className="text-[#00C805]">↗</span> Uniswap v4 graduation
           </span>
         </div>
       </section>
@@ -161,7 +161,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           {/* New Coins Cards Grid */}
           {newMillionaires.length === 0 ? (
             <div className="panel p-8 text-center font-mono">
-              <p className="font-pixel text-lg font-bold text-[rgb(var(--ink))]">No coins launched yet on Arbitrum Sepolia</p>
+              <p className="font-pixel text-lg font-bold text-[rgb(var(--ink))]">No coins launched yet on Arbitrum One</p>
               <p className="mt-1.5 text-xs text-[rgb(var(--muted))]">
                 Every coin starts at $1,000,000 FDV floor. Be the first pioneer to deploy!
               </p>

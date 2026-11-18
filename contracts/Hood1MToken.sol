@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Hood1MToken is ERC20, Ownable {
     uint256 public constant TOTAL_SUPPLY = 1_000_000_000 * 10**18;
     uint256 public constant CURVE_SUPPLY = 800_000_000 * 10**18; // 80% sold along bonding curve
-    uint256 public constant MIGRATION_SUPPLY = 200_000_000 * 10**18; // 20% reserved for Uniswap v3 LP
+    uint256 public constant MIGRATION_SUPPLY = 200_000_000 * 10**18; // 20% reserved for Uniswap v4 LP
 
     string public tokenDescription;
     string public tokenImage;
@@ -35,7 +35,7 @@ contract Hood1MToken is ERC20, Ownable {
 
         // Mint 80% to bonding curve for trading
         _mint(bondingCurve_, CURVE_SUPPLY);
-        // Mint 20% to bonding curve escrow for Uniswap v3 LP migration
+        // Mint 20% to bonding curve escrow for Uniswap v4 LP migration
         _mint(bondingCurve_, MIGRATION_SUPPLY);
 
         emit TokenLaunched(address(this), bondingCurve_, creator_);

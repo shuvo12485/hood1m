@@ -9,6 +9,7 @@ import {
   INITIAL_SUPPLY,
   ETH_PRICE_USD,
 } from '../utils/bondingCurve';
+import { getExplorerTxUrl } from '../contracts/config';
 import {
   Copy,
   Check,
@@ -140,7 +141,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
         if (res.success) {
           setFeedback({
             type: 'success',
-            text: `Order filled on Arbitrum Sepolia! Received ${res.tokensDiff ? res.tokensDiff.toLocaleString() : ''} ${token.symbol}.`,
+            text: `Order filled on Arbitrum One Mainnet! Received ${res.tokensDiff ? res.tokensDiff.toLocaleString() : ''} ${token.symbol}.`,
           });
           if (res.txHash) setTxHashLink(res.txHash);
           setTradeInput('');
@@ -169,7 +170,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
         if (res.success) {
           setFeedback({
             type: 'success',
-            text: `Sold ${parsedInput.toLocaleString()} ${token.symbol} on Arbitrum Sepolia!`,
+            text: `Sold ${parsedInput.toLocaleString()} ${token.symbol} on Arbitrum One Mainnet!`,
           });
           if (res.txHash) setTxHashLink(res.txHash);
           setTradeInput('');
@@ -218,7 +219,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
               </span>
               {token.graduated ? (
                 <span className="rounded-full bg-black px-2.5 py-0.5 font-mono text-[10px] font-bold text-white">
-                  UNISWAP v3 GRADUATED
+                  UNISWAP v4 GRADUATED
                 </span>
               ) : (
                 <span className="rounded-full border border-[#00C805] bg-[#00C805]/10 px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#00C805]">
@@ -239,7 +240,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
               </button>
 
               <span>· Creator: {token.creator}</span>
-              <span>· Network: Arbitrum L2</span>
+              <span>· Network: Arbitrum One Mainnet</span>
 
               {token.twitter && (
                 <a href={token.twitter} target="_blank" rel="noreferrer" className="hover:text-[#00C805]">
@@ -286,7 +287,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
           <div className="flex items-center gap-2">
             <Award className="h-4 w-4 text-[#00C805]" />
             <span className="font-bold text-[rgb(var(--ink))]">
-              Uniswap v3 Liquidity Migration:
+              Uniswap v4 Pool Migration:
             </span>
             <span className="text-[rgb(var(--muted))]">
               {token.ethReserve.toFixed(2)} / {GRADUATION_ETH_THRESHOLD} ETH ({progressPercent}%)
@@ -414,7 +415,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
                             <td className="py-2.5 text-[rgb(var(--muted))]">
                               {tr.txHash ? (
                                 <a
-                                  href={`https://sepolia.arbiscan.io/tx/${tr.txHash}`}
+                                  href={getExplorerTxUrl(tr.txHash)}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="text-[#00C805] hover:underline"
@@ -697,7 +698,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
               </div>
               <div className="flex justify-between">
                 <span className="text-[rgb(var(--muted))]">Execution Network:</span>
-                <span>Arbitrum L2</span>
+                <span>Arbitrum One Mainnet · Uniswap v4</span>
               </div>
             </div>
 
@@ -747,7 +748,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
                 {txHashLink && (
                   <div className="mt-1.5">
                     <a
-                      href={`https://sepolia.arbiscan.io/tx/${txHashLink}`}
+                      href={getExplorerTxUrl(txHashLink)}
                       target="_blank"
                       rel="noreferrer"
                       className="underline font-bold inline-flex items-center gap-1 hover:opacity-80"
@@ -780,7 +781,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ mint, navigate }) => {
               >
                 {isTrading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Activity className="h-4 w-4 animate-spin" /> Signing on Arbitrum Sepolia…
+                    <Activity className="h-4 w-4 animate-spin" /> Signing on Arbitrum One…
                   </span>
                 ) : (
                   tradeType === 'buy' ? `Execute Buy Order` : `Execute Sell Order`
